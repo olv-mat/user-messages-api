@@ -3,10 +3,16 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class MessagesService {
   public findAll(): string {
-    return 'All found';
+    return 'All messages found';
   }
 
   public findOne(id: string): string {
-    return `One found (${id})`;
+    console.log(id);
+    return 'One message found';
+  }
+
+  public create(body: any): string {
+    console.log(body);
+    return 'Message created';
   }
 }
