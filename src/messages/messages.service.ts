@@ -5,4 +5,8 @@ export class MessagesService {
   public findAll(): string {
     return 'All found';
   }
+
+  public findOne(id: string): string {
+    return `One found (${id})`;
+  }
 }

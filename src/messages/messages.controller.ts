@@ -9,4 +9,9 @@ export class MessagesController {
   public findAll(): string {
     return this.messagesService.findAll();
   }
+
+  @Get(':id')
+  public findOne(@Param('id') id: string): string {
+    return this.messagesService.findOne(id);
+  }
 }
