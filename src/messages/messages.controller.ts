@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
@@ -30,5 +31,10 @@ export class MessagesController {
   @Post()
   public create(@Body() body: any): string {
     return this.messagesService.create(body);
+  }
+
+  @Patch(':id')
+  public update(@Param('id') id: string, @Body() body: any) {
+    return this.messagesService.update(id, body);
   }
 }

@@ -13,6 +13,12 @@ export class MessagesService {
 
   public create(body: any): string {
     console.log(body);
-    return 'Message created';
+    return 'Message created successfully';
+  }
+
+  public update(id: string, body: any): string {
+    console.log(id);
+    console.log(body);
+    return 'Message updated successfully';
   }
 }
