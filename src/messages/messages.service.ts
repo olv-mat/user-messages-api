@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { MessageEntity } from './entities/message.entity';
+import { CreateMessageDto } from './dtos/CreateMessage.dto';
 
 @Injectable()
 export class MessagesService {
+  private messages: MessageEntity[] = [];
+
   public findAll(search?: string): string {
     if (search) {
       console.log(search);
@@ -14,8 +18,15 @@ export class MessagesService {
     return 'One message found';
   }
 
-  public create(body: any): string {
-    console.log(body);
+  public create(body: CreateMessageDto): string {
+    const message = new MessageEntity();
+    message.id = this.messages.length;
+    message.content = body.content;
+    message.sender = body.sender;
+    message.recipient = body.recipient;
+    message.read = false;
+
+    this.messages.push(message);
     return 'Message created successfully';
   }
 
