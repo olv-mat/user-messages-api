@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MessagesService {
-  public findAll(): string {
+  public findAll(search?: string): string {
+    if (search) {
+      console.log(search);
+    }
     return 'All messages found';
   }
 

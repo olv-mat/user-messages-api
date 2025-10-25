@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 
@@ -14,8 +15,8 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   @Get()
-  public findAll(): string {
-    return this.messagesService.findAll();
+  public findAll(@Query('search') search?: string): string {
+    return this.messagesService.findAll(search);
   }
 
   @Get(':id')
