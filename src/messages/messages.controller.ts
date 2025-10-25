@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Patch,
   Post,
@@ -14,10 +12,6 @@ import { MessagesService } from './messages.service';
 @Controller('messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
-
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @Get('/healthCheck')
-  public healthCheck(): void {}
 
   @Get()
   public findAll(): string {
