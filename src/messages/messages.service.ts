@@ -21,4 +21,9 @@ export class MessagesService {
     console.log(body);
     return 'Message updated successfully';
   }
+
+  public delete(id: string): string {
+    console.log(id);
+    return 'Message deleted successfully';
+  }
 }

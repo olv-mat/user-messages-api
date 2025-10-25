@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -34,7 +35,12 @@ export class MessagesController {
   }
 
   @Patch(':id')
-  public update(@Param('id') id: string, @Body() body: any) {
+  public update(@Param('id') id: string, @Body() body: any): string {
     return this.messagesService.update(id, body);
+  }
+
+  @Delete(':id')
+  public delete(@Param('id') id: string): string {
+    return this.messagesService.delete(id);
   }
 }
