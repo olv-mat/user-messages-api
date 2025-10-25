@@ -1,9 +1,21 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { MessagesService } from './messages.service';
 
 @Controller('messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Get('/healthCheck')
+  public healthCheck(): void {}
 
   @Get()
   public findAll(): string {
