@@ -23,7 +23,7 @@ export class MessagesController {
   }
 
   @Get(':id')
-  public findOne(@Param('id') id: string): MessageEntity {
+  public findOne(@Param('id') id: number): MessageEntity {
     return this.messagesService.findOne(id);
   }
 
@@ -34,14 +34,14 @@ export class MessagesController {
 
   @Patch(':id')
   public update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() dto: UpdateMessageDto,
   ): { message: string } {
     return this.messagesService.update(id, dto);
   }
 
   @Delete(':id')
-  public delete(@Param('id') id: string): { message: string } {
+  public delete(@Param('id') id: number): { message: string } {
     return this.messagesService.delete(id);
   }
 }

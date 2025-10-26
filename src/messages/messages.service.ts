@@ -19,7 +19,7 @@ export class MessagesService {
     return this.messages;
   }
 
-  public findOne(id: string): MessageEntity {
+  public findOne(id: number): MessageEntity {
     return this.findMessageById(id);
   }
 
@@ -35,7 +35,7 @@ export class MessagesService {
     return { message: 'Message created successfully' };
   }
 
-  public update(id: string, dto: UpdateMessageDto): { message: string } {
+  public update(id: number, dto: UpdateMessageDto): { message: string } {
     const index = this.findMessageIndex(id);
     const message = this.messages[index];
     this.messages[index] = {
@@ -45,21 +45,21 @@ export class MessagesService {
     return { message: 'Message updated successfully' };
   }
 
-  public delete(id: string): { message: string } {
+  public delete(id: number): { message: string } {
     const index = this.findMessageIndex(id);
     this.messages.splice(index, 1);
     return { message: 'Message deleted successfully' };
   }
 
-  private findMessageById(id: string): MessageEntity {
-    const message = this.messages.find((item) => item.id === +id);
+  private findMessageById(id: number): MessageEntity {
+    const message = this.messages.find((item) => item.id === id);
     if (!message) {
       throw new NotFoundException('Message not found');
     }
     return message;
   }
 
-  private findMessageIndex(id: string): number {
+  private findMessageIndex(id: number): number {
     const index = this.messages.findIndex((item) => item.id === +id);
     if (index < 0) {
       throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
