@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
-import { MessagesService } from './messages.service';
-import { MessageEntity } from './entities/message.entity';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
+import { MessageEntity } from './entities/message.entity';
+import { MessagesService } from './messages.service';
 
 @Controller('messages')
 export class MessagesController {
@@ -28,16 +28,16 @@ export class MessagesController {
   }
 
   @Post()
-  public create(@Body() body: CreateMessageDto): { message: string } {
-    return this.messagesService.create(body);
+  public create(@Body() dto: CreateMessageDto): { message: string } {
+    return this.messagesService.create(dto);
   }
 
   @Patch(':id')
   public update(
     @Param('id') id: string,
-    @Body() body: UpdateMessageDto,
+    @Body() dto: UpdateMessageDto,
   ): { message: string } {
-    return this.messagesService.update(id, body);
+    return this.messagesService.update(id, dto);
   }
 
   @Delete(':id')
