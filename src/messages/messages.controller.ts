@@ -23,7 +23,7 @@ export class MessagesController {
   }
 
   @Get(':id')
-  public findOne(@Param('id') id: string): MessageEntity | undefined {
+  public findOne(@Param('id') id: string): MessageEntity {
     return this.messagesService.findOne(id);
   }
 

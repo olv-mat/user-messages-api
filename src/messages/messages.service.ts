@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { MessageEntity } from './entities/message.entity';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
@@ -14,8 +19,8 @@ export class MessagesService {
     return this.messages;
   }
 
-  public findOne(id: string): MessageEntity | undefined {
-    return this.messages.find((item) => item.id === +id);
+  public findOne(id: string): MessageEntity {
+    return this.findMessageById(id);
   }
 
   public create(body: CreateMessageDto): { message: string } {
@@ -31,22 +36,34 @@ export class MessagesService {
   }
 
   public update(id: string, body: UpdateMessageDto): { message: string } {
-    const index = this.messages.findIndex((item) => item.id === +id);
-    if (index >= 0) {
-      const message = this.messages[index];
-      this.messages[index] = {
-        ...message,
-        ...body,
-      };
-    }
+    const index = this.findMessageIndex(id);
+    const message = this.messages[index];
+    this.messages[index] = {
+      ...message,
+      ...body,
+    };
     return { message: 'Message updated successfully' };
   }
 
   public delete(id: string): { message: string } {
-    const index = this.messages.findIndex((item) => item.id === +id);
-    if (index >= 0) {
-      this.messages.splice(index, 1);
-    }
+    const index = this.findMessageIndex(id);
+    this.messages.splice(index, 1);
     return { message: 'Message deleted successfully' };
+  }
+
+  private findMessageById(id: string): MessageEntity {
+    const message = this.messages.find((item) => item.id === +id);
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+    return message;
+  }
+
+  private findMessageIndex(id: string): number {
+    const index = this.messages.findIndex((item) => item.id === +id);
+    if (index < 0) {
+      throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
+    }
+    return index;
   }
 }
