@@ -7,16 +7,23 @@ import {
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
 import { MessageEntity } from './entities/message.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class MessagesService {
+  constructor(
+    @InjectRepository(MessageEntity)
+    private readonly messagesRepository: Repository<MessageEntity>,
+  ) {}
+
   private messages: MessageEntity[] = [];
 
-  public findAll(search?: string): MessageEntity[] {
+  public async findAll(search?: string): Promise<MessageEntity[]> {
     if (search) {
       console.log(search);
     }
-    return this.messages;
+    return await this.messagesRepository.find();
   }
 
   public findOne(id: number): MessageEntity {

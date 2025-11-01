@@ -18,7 +18,7 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   @Get()
-  public findAll(@Query('search') search?: string): MessageEntity[] {
+  public findAll(@Query('search') search?: string): Promise<MessageEntity[]> {
     return this.messagesService.findAll(search);
   }
 
