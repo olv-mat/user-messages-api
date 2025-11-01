@@ -30,16 +30,11 @@ export class MessagesService {
     return await this.findMessageById(id);
   }
 
-  public create(dto: CreateMessageDto): { message: string } {
-    const message = new MessageEntity();
-    message.id = this.messages.length;
-    message.content = dto.content;
-    message.sender = dto.sender;
-    message.recipient = dto.recipient;
-    message.read = false;
-
-    this.messages.push(message);
-    return { message: 'Message created successfully' };
+  public async create(
+    dto: CreateMessageDto,
+  ): Promise<{ id: number; message: string }> {
+    const newMessage = await this.messagesRepository.save(dto);
+    return { id: newMessage.id, message: 'Message created successfully' };
   }
 
   public update(id: number, dto: UpdateMessageDto): { message: string } {
