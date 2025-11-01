@@ -1,14 +1,9 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
 import { MessageEntity } from './entities/message.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class MessagesService {
@@ -16,8 +11,6 @@ export class MessagesService {
     @InjectRepository(MessageEntity)
     private readonly messagesRepository: Repository<MessageEntity>,
   ) {}
-
-  private messages: MessageEntity[] = [];
 
   public async findAll(search?: string): Promise<MessageEntity[]> {
     if (search) {
@@ -33,23 +26,22 @@ export class MessagesService {
   public async create(
     dto: CreateMessageDto,
   ): Promise<{ id: number; message: string }> {
-    const newMessage = await this.messagesRepository.save(dto);
-    return { id: newMessage.id, message: 'Message created successfully' };
+    const message = await this.messagesRepository.save(dto);
+    return { id: message.id, message: 'Message created successfully' };
   }
 
-  public update(id: number, dto: UpdateMessageDto): { message: string } {
-    const index = this.findMessageIndex(id);
-    const message = this.messages[index];
-    this.messages[index] = {
-      ...message,
-      ...dto,
-    };
+  public async update(
+    id: number,
+    dto: UpdateMessageDto,
+  ): Promise<{ message: string }> {
+    const message = await this.findMessageById(id);
+    await this.messagesRepository.update(message.id, dto);
     return { message: 'Message updated successfully' };
   }
 
-  public delete(id: number): { message: string } {
-    const index = this.findMessageIndex(id);
-    this.messages.splice(index, 1);
+  public async delete(id: number): Promise<{ message: string }> {
+    const message = await this.findMessageById(id);
+    await this.messagesRepository.delete(message.id);
     return { message: 'Message deleted successfully' };
   }
 
@@ -61,13 +53,5 @@ export class MessagesService {
       throw new NotFoundException('Message not found');
     }
     return message;
-  }
-
-  private findMessageIndex(id: number): number {
-    const index = this.messages.findIndex((item) => item.id === +id);
-    if (index < 0) {
-      throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
-    }
-    return index;
   }
 }

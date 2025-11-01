@@ -38,12 +38,12 @@ export class MessagesController {
   public update(
     @Param('id') id: number,
     @Body() dto: UpdateMessageDto,
-  ): { message: string } {
+  ): Promise<{ message: string }> {
     return this.messagesService.update(id, dto);
   }
 
   @Delete(':id')
-  public delete(@Param('id') id: number): { message: string } {
+  public delete(@Param('id') id: number): Promise<{ message: string }> {
     return this.messagesService.delete(id);
   }
 }
