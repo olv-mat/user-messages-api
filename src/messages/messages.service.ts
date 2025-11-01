@@ -26,8 +26,8 @@ export class MessagesService {
     return await this.messagesRepository.find();
   }
 
-  public findOne(id: number): MessageEntity {
-    return this.findMessageById(id);
+  public async findOne(id: number): Promise<MessageEntity> {
+    return await this.findMessageById(id);
   }
 
   public create(dto: CreateMessageDto): { message: string } {
@@ -58,8 +58,10 @@ export class MessagesService {
     return { message: 'Message deleted successfully' };
   }
 
-  private findMessageById(id: number): MessageEntity {
-    const message = this.messages.find((item) => item.id === id);
+  private async findMessageById(id: number): Promise<MessageEntity> {
+    const message = await this.messagesRepository.findOne({
+      where: { id: id },
+    });
     if (!message) {
       throw new NotFoundException('Message not found');
     }

@@ -23,7 +23,7 @@ export class MessagesController {
   }
 
   @Get(':id')
-  public findOne(@Param('id') id: number): MessageEntity {
+  public findOne(@Param('id') id: number): Promise<MessageEntity> {
     return this.messagesService.findOne(id);
   }
 
