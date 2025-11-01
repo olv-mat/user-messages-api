@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { MessagesModule } from './messages/messages.module';
-import { HealthModule } from './health/health.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { HealthModule } from './health/health.module';
+import { MessagesModule } from './messages/messages.module';
+import { UsersModule } from './users/users.module';
 
 // nest generate resource <resource> (nest g res <resource>)
 
@@ -30,8 +31,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         synchronize: true,
       }),
     }),
-    MessagesModule,
     HealthModule,
+    MessagesModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
