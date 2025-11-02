@@ -60,6 +60,12 @@ export class UsersService {
     return { message: 'User updated successfully' };
   }
 
+  public async delete(id: number): Promise<{ message: string }> {
+    const user = await this.findUserById(id);
+    await this.usersRepository.delete(user.id);
+    return { message: 'User deleted successfully' };
+  }
+
   private async findUserById(id: number): Promise<UserEntity> {
     const user = await this.usersRepository.findOneBy({ id: id });
     if (!user) {
