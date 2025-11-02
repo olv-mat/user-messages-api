@@ -1,16 +1,21 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('messages')
 export class MessageEntity extends BaseEntity {
   @Column({ type: 'text' })
   content: string;
 
-  @Column()
-  sender: string;
+  // Users Can Send Many Messages
+  @ManyToOne(() => UserEntity, (user) => user.sentMessages)
+  @JoinColumn({ name: 'sender' })
+  sender: UserEntity;
 
-  @Column()
-  recipient: string;
+  // Users Can Receive Many Messages
+  @ManyToOne(() => UserEntity, (user) => user.receivedMessages)
+  @JoinColumn({ name: 'recipent' })
+  recipient: UserEntity;
 
   @Column({ default: false })
   read: boolean;
