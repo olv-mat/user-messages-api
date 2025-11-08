@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
 import { MessageEntity } from './entities/message.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectRepository(MessageEntity)
     private readonly messagesRepository: Repository<MessageEntity>,
+    private readonly usersService: UsersService,
   ) {}
 
   public async findAll(search?: string): Promise<MessageEntity[]> {
@@ -26,7 +28,13 @@ export class MessagesService {
   public async create(
     dto: CreateMessageDto,
   ): Promise<{ id: number; message: string }> {
-    const message = await this.messagesRepository.save(dto);
+    const sender = await this.usersService.findOne(dto.sender);
+    const recipient = await this.usersService.findOne(dto.recipient);
+    const message = await this.messagesRepository.save({
+      content: dto.content,
+      sender: sender,
+      recipient: recipient,
+    });
     return { id: message.id, message: 'Message created successfully' };
   }
 

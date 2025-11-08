@@ -8,13 +8,21 @@ export class MessageEntity extends BaseEntity {
   content: string;
 
   // Users Can Send Many Messages
-  @ManyToOne(() => UserEntity, (user) => user.sentMessages)
+  @ManyToOne(() => UserEntity, (user) => user.sentMessages, {
+    eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'sender' })
   sender: UserEntity;
 
   // Users Can Receive Many Messages
-  @ManyToOne(() => UserEntity, (user) => user.receivedMessages)
-  @JoinColumn({ name: 'recipent' })
+  @ManyToOne(() => UserEntity, (user) => user.receivedMessages, {
+    eager: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'recipient' })
   recipient: UserEntity;
 
   @Column({ default: false })

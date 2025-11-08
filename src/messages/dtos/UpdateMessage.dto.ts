@@ -6,7 +6,7 @@ import { CreateMessageDto } from './CreateMessage.dto';
 // npm i @nestjs/mapped-types
 
 export class UpdateMessageDto extends PartialType(
-  OmitType(CreateMessageDto, [] as const),
+  OmitType(CreateMessageDto, ['sender', 'recipient'] as const),
 ) {
   @IsOptional()
   @IsBoolean()
