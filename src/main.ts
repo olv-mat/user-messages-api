@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ParseIntIdPipe } from './common/pipes/parse-int-id.pipe';
 
 /*
   nest new <project>
@@ -18,6 +19,7 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
     }),
+    new ParseIntIdPipe(),
   );
   await app.listen(process.env.PORT ?? 3000);
 }
