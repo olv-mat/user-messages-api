@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { RequestTimeInterceptor } from './common/interceptors/request-time.interceptor';
 import { ParseIntIdPipe } from './common/pipes/parse-int-id.pipe';
 
 /*
@@ -21,6 +22,7 @@ async function bootstrap() {
     }),
     new ParseIntIdPipe(),
   );
+  app.useGlobalInterceptors(new RequestTimeInterceptor());
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();

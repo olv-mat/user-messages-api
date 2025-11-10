@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 
 export class ParseIntIdPipe implements PipeTransform {
-  public transform(value: any, metadata: ArgumentMetadata): number | undefined {
+  public transform(value: any, metadata: ArgumentMetadata): any {
     if (metadata.type == 'param' && metadata.data == 'id') {
       const parsedValue = Number(value);
       if (isNaN(parsedValue)) {
@@ -18,5 +18,6 @@ export class ParseIntIdPipe implements PipeTransform {
       }
       return parsedValue;
     }
+    return value;
   }
 }
