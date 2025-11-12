@@ -14,7 +14,7 @@ export class RequestTimeInterceptor implements NestInterceptor {
   public intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
-  ): Observable<any> {
+  ): Observable<any> | Promise<Observable<any>> {
     const start = Date.now();
     return next.handle().pipe(
       tap(() => {
