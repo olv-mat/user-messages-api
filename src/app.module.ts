@@ -1,6 +1,8 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CustomExceptionFilter } from './common/filters/custom-exception.filter';
 import { AuthTokenInterceptor } from './common/interceptors/auth-token.interceptor';
 import { RequestUuidMiddleware } from './common/middlewares/request-uuid.middleware';
 import { HealthModule } from './health/health.module';
@@ -38,7 +40,13 @@ import { UsersModule } from './users/users.module';
     UsersModule,
   ],
   controllers: [],
-  providers: [AuthTokenInterceptor],
+  providers: [
+    AuthTokenInterceptor,
+    {
+      provide: APP_FILTER,
+      useClass: CustomExceptionFilter,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
