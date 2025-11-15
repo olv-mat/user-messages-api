@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthTokenInterceptor } from './common/interceptors/auth-token.interceptor';
+import { RequestUuidMiddleware } from './common/middlewares/request-uuid.middleware';
 import { HealthModule } from './health/health.module';
 import { MessagesModule } from './messages/messages.module';
 import { UsersModule } from './users/users.module';
@@ -39,4 +40,8 @@ import { UsersModule } from './users/users.module';
   controllers: [],
   providers: [AuthTokenInterceptor],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  public configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestUuidMiddleware).forRoutes('*');
+  }
+}
