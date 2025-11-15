@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { AuthTokenInterceptor } from './common/interceptors/auth-token.interceptor';
 import { ErrorLoggingInterceptor } from './common/interceptors/error-logging.interceptor';
 import { RequestTimeInterceptor } from './common/interceptors/request-time.interceptor';
 import { ParseIntIdPipe } from './common/pipes/parse-int-id.pipe';
@@ -26,6 +27,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(
     new RequestTimeInterceptor(),
     new ErrorLoggingInterceptor(),
+    app.get(AuthTokenInterceptor),
   );
   await app.listen(process.env.PORT ?? 3000);
 }

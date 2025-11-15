@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthTokenInterceptor } from './common/interceptors/auth-token.interceptor';
 import { HealthModule } from './health/health.module';
 import { MessagesModule } from './messages/messages.module';
 import { UsersModule } from './users/users.module';
@@ -20,13 +21,13 @@ import { UsersModule } from './users/users.module';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: (config: ConfigService) => ({
         type: 'mysql',
-        host: configService.get('DATABASE_HOST'),
-        port: configService.get<number>('DATABASE_PORT'),
-        username: configService.get('DATABASE_USERNAME'),
-        password: configService.get('DATABASE_PASSWORD'),
-        database: configService.get('DATABASE_NAME'),
+        host: config.get('DATABASE_HOST'),
+        port: config.get<number>('DATABASE_PORT'),
+        username: config.get('DATABASE_USERNAME'),
+        password: config.get('DATABASE_PASSWORD'),
+        database: config.get('DATABASE_NAME'),
         autoLoadEntities: true,
         synchronize: true,
       }),
@@ -36,6 +37,6 @@ import { UsersModule } from './users/users.module';
     UsersModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [AuthTokenInterceptor],
 })
 export class AppModule {}

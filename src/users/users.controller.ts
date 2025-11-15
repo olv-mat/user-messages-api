@@ -6,12 +6,9 @@ import {
   Param,
   Patch,
   Post,
-  UseInterceptors,
 } from '@nestjs/common';
 import { ActionResponseDto } from 'src/common/dtos/ActionResponse.dto';
 import { MessageResponseDto } from 'src/common/dtos/MessageResponse.dto';
-import { CacheIntercepotor } from 'src/common/interceptors/cache.interceptor';
-import { ChangeResponseInterceptor } from 'src/common/interceptors/change-response.interceptor';
 import { CreateUserDto } from './dtos/CreateUser.dto';
 import { UpdateUserDto } from './dtos/UpdateUser.dto';
 import { UserEntity } from './entities/user.entity';
@@ -22,8 +19,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseInterceptors(CacheIntercepotor)
-  @UseInterceptors(ChangeResponseInterceptor)
   public findAll(): Promise<UserEntity | UserEntity[]> {
     return this.usersService.findAll();
   }
