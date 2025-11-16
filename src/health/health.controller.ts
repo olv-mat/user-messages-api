@@ -1,15 +1,7 @@
-import {
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  UseInterceptors,
-} from '@nestjs/common';
-import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interceptor';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { HealthService } from './health.service';
 
 @Controller('health')
-@UseInterceptors(AddHeaderInterceptor)
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
 

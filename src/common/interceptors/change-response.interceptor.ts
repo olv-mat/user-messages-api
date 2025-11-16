@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 
@@ -14,7 +15,6 @@ export class ChangeResponseInterceptor implements NestInterceptor {
             count: data.length,
           };
         }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data;
       }),
     );
