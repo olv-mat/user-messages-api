@@ -1,6 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { SERVER_NAME } from 'src/common/constants/server-name.constant';
 
 @Injectable()
 export class HealthService {
-  public check(): void {}
+  private readonly logger = new Logger(HealthService.name);
+
+  constructor(@Inject(SERVER_NAME) private readonly serverName: string) {}
+
+  public check(): void {
+    this.logger.log(this.serverName);
+  }
 }

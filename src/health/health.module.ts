@@ -1,9 +1,16 @@
 import { Module } from '@nestjs/common';
-import { HealthService } from './health.service';
+import { SERVER_NAME } from 'src/common/constants/server-name.constant';
 import { HealthController } from './health.controller';
+import { HealthService } from './health.service';
 
 @Module({
   controllers: [HealthController],
-  providers: [HealthService],
+  providers: [
+    HealthService,
+    {
+      provide: SERVER_NAME, // Token
+      useValue: SERVER_NAME, // Value
+    },
+  ],
 })
 export class HealthModule {}
