@@ -1,4 +1,3 @@
-import { Expose } from 'class-transformer';
 import {
   CreateDateColumn,
   DeleteDateColumn,
@@ -7,7 +6,6 @@ import {
 } from 'typeorm';
 
 export abstract class BaseEntity {
-  @Expose()
   @PrimaryGeneratedColumn('increment')
   id: number;
 

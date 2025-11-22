@@ -10,13 +10,13 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @Matches(/\S/, { message: 'name cannot contain only spaces' })
-  readonly name: string;
+  public readonly name: string;
 
   @IsNotEmpty()
   @IsEmail()
-  readonly email: string;
+  public readonly email: string;
 
   @IsNotEmpty()
   @IsStrongPassword()
-  readonly password: string;
+  public readonly password: string;
 }

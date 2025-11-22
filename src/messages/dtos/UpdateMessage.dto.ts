@@ -10,5 +10,5 @@ export class UpdateMessageDto extends PartialType(
 ) {
   @IsOptional()
   @IsBoolean()
-  readonly read?: boolean;
+  public readonly read?: boolean;
 }

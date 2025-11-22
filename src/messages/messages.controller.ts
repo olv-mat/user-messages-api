@@ -8,11 +8,10 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ActionResponseDto } from 'src/common/dtos/ActionResponse.dto';
-import { MessageResponseDto } from 'src/common/dtos/MessageResponse.dto';
+import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
+import { MessageResponseDto } from './dtos/MessageResponse.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
-import { MessageEntity } from './entities/message.entity';
 import { MessagesService } from './messages.service';
 
 @Controller('messages')
@@ -22,19 +21,19 @@ export class MessagesController {
   @Get()
   public findAll(
     @Query('search') search?: string,
-  ): Promise<MessageEntity | MessageEntity[]> {
+  ): Promise<MessageResponseDto | MessageResponseDto[]> {
     return this.messagesService.findAll(search);
   }
 
   @Get(':id')
   public findOne(
     @Param('id') id: number,
-  ): Promise<MessageEntity | MessageEntity[]> {
+  ): Promise<MessageResponseDto | MessageResponseDto[]> {
     return this.messagesService.findOne(id);
   }
 
   @Post()
-  public create(@Body() dto: CreateMessageDto): Promise<ActionResponseDto> {
+  public create(@Body() dto: CreateMessageDto): Promise<DefaultResponseDto> {
     return this.messagesService.create(dto);
   }
 
@@ -42,12 +41,12 @@ export class MessagesController {
   public update(
     @Param('id') id: number,
     @Body() dto: UpdateMessageDto,
-  ): Promise<MessageResponseDto> {
+  ): Promise<DefaultResponseDto> {
     return this.messagesService.update(id, dto);
   }
 
   @Delete(':id')
-  public delete(@Param('id') id: number): Promise<MessageResponseDto> {
+  public delete(@Param('id') id: number): Promise<DefaultResponseDto> {
     return this.messagesService.delete(id);
   }
 }

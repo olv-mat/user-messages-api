@@ -11,13 +11,13 @@ export class CreateMessageDto {
   @IsNotEmpty()
   @IsString()
   @Matches(/\S/, { message: 'content cannot contain only spaces' })
-  readonly content: string;
+  public readonly content: string;
 
   @IsInt()
   @IsPositive()
-  readonly sender: number;
+  public readonly sender: number;
 
   @IsInt()
   @IsPositive()
-  readonly recipient: number;
+  public readonly recipient: number;
 }

@@ -1,1 +1,1 @@
-export const SERVER_NAME = 'User Messages API Server';
+export const SERVER_NAME = 'SERVER_NAME';

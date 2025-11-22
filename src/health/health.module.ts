@@ -9,7 +9,7 @@ import { HealthService } from './health.service';
     HealthService,
     {
       provide: SERVER_NAME, // Token
-      useValue: SERVER_NAME, // Value
+      useValue: 'User Messages API Server', // Value
     },
   ],
 })
