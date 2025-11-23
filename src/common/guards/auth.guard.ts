@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException('Missing authentication token');
     }
-    if (token != this.config.get<string>('TOKEN')) {
+    if (token != this.config.get('TOKEN')) {
       throw new UnauthorizedException('Invalid authentication token');
     }
     return true;

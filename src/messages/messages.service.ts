@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
@@ -10,7 +10,13 @@ import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
 import { MessageEntity } from './entities/message.entity';
 import { MessageResponseMapper } from './mappers/message-response.mapper';
 
-@Injectable()
+/*
+  Scope.DEFAULT = The Provider In Question Is a Singleton.
+  Scope.REQUEST = The Provider In Question Is Instantiated With Each Request.
+  Scope.TRANSIENT = An Instance Of The Provider Is Created For Each Class That Injects It.
+*/
+
+@Injectable({ scope: Scope.DEFAULT })
 export class MessagesService {
   constructor(
     @InjectRepository(MessageEntity)
