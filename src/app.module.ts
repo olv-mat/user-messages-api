@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomExceptionFilter } from './common/filters/custom-exception.filter';
 import { AuthGuard } from './common/guards/auth.guard';
 import { RequestUuidMiddleware } from './common/middlewares/request-uuid.middleware';
-import { HealthModule } from './health/health.module';
-import { MessagesModule } from './messages/messages.module';
-import { UsersModule } from './users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { HealthModule } from './modules/health/health.module';
+import { MessagesModule } from './modules/messages/messages.module';
+import { UsersModule } from './modules/users/users.module';
 
 // nest generate resource <resource> (nest g res <resource>)
 
@@ -38,6 +39,7 @@ import { UsersModule } from './users/users.module';
     HealthModule,
     MessagesModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/modules/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { MessageResponseDto } from './dtos/MessageResponse.dto';

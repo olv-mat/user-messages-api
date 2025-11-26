@@ -4,26 +4,22 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { Repository } from 'typeorm';
+import { HashService } from '../auth/hash/hash.service';
 import { CreateUserDto } from './dtos/CreateUser.dto';
 import { UpdateUserDto } from './dtos/UpdateUser.dto';
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserResponseMapper } from './mappers/user-response.mapper';
 
-/* 
-  npm install bcrypt
-  npm install --D @types/bcrypt 
-*/
-
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
+    private readonly hashService: HashService,
   ) {}
 
   public async findAll(): Promise<UserResponseDto | UserResponseDto[]> {
@@ -42,7 +38,7 @@ export class UsersService {
     await this.assertEmailIsAvailable(dto.email);
     const user = await this.usersRepository.save({
       ...dto,
-      password: await bcrypt.hash(dto.password, 10),
+      password: await this.hashService.hash(dto.password),
     });
     return ResponseMapper.toAResponse(user.id, 'User created successfully');
   }
@@ -59,7 +55,7 @@ export class UsersService {
     }
 
     if (payload.password) {
-      payload.password = await bcrypt.hash(payload.password, 10);
+      payload.password = await this.hashService.hash(payload.password);
     }
 
     await this.usersRepository.update(user.id, payload);
