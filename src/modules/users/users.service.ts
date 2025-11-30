@@ -54,14 +54,21 @@ export class UsersService {
     await this.usersRepository.delete(user.id);
   }
 
-  private async assertEmailIsAvailable(email: string): Promise<void> {
-    const user = await this.usersRepository.findOneBy({ email: email });
-    if (user) throw new ConflictException('Email already in use');
+  public async getUserByEmail(email: string): Promise<UserEntity | null> {
+    const user = await this.usersRepository.findOne({
+      where: { email: email },
+    });
+    return user;
   }
 
   private async getUserById(id: number): Promise<UserEntity> {
     const user = await this.usersRepository.findOneBy({ id: id });
     if (!user) throw new NotFoundException('User not found');
     return user;
+  }
+
+  private async assertEmailIsAvailable(email: string): Promise<void> {
+    const user = await this.usersRepository.findOneBy({ email: email });
+    if (user) throw new ConflictException('Email already in use');
   }
 }
