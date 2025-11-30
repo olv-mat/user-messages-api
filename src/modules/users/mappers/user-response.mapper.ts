@@ -2,11 +2,8 @@ import { UserResponseDto } from '../dtos/UserResponse.dto';
 import { UserEntity } from '../entities/user.entity';
 
 export class UserResponseMapper {
-  public static toResponse(
-    input: UserEntity | UserEntity[],
-  ): UserResponseDto | UserResponseDto[] {
-    return Array.isArray(input) ? this.toDtoList(input) : this.toDto(input);
-  }
+  public static toResponseOne = (user: UserEntity) => this.toDto(user);
+  public static toResponseMany = (users: UserEntity[]) => this.toDtoList(users);
 
   public static toDto(user: UserEntity): UserResponseDto {
     const { id, name, email } = user;

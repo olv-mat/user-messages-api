@@ -3,13 +3,11 @@ import { MessageResponseDto } from '../dtos/MessageResponse.dto';
 import { MessageEntity } from '../entities/message.entity';
 
 export class MessageResponseMapper {
-  public static toResponse(
-    input: MessageEntity | MessageEntity[],
-  ): MessageResponseDto | MessageResponseDto[] {
-    return Array.isArray(input) ? this.toDtoList(input) : this.toDto(input);
-  }
+  public static toResponseOne = (message: MessageEntity) => this.toDto(message);
+  public static toResponseMany = (messages: MessageEntity[]) =>
+    this.toDtoList(messages);
 
-  public static toDto(message: MessageEntity): MessageResponseDto {
+  private static toDto(message: MessageEntity): MessageResponseDto {
     const { id, content, read, createdAt, sender, recipient } = message;
     return new MessageResponseDto(
       id,

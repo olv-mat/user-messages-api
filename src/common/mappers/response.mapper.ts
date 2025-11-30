@@ -1,7 +1,8 @@
-import { DefaultResponseDto } from '../dtos/DefaultResponse.dto';
-
 export class ResponseMapper {
-  public static toAResponse(id: number, message: string): DefaultResponseDto {
-    return new DefaultResponseDto(id, message);
+  public static toResponse<T>(
+    dto: new (...args: unknown[]) => T,
+    ...args: ConstructorParameters<typeof dto>
+  ): T {
+    return new dto(...args);
   }
 }

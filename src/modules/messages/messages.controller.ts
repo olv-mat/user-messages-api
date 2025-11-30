@@ -8,10 +8,13 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
 import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
+import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { MessageResponseDto } from './dtos/MessageResponse.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
+import { MessageResponseMapper } from './mappers/message-response.mapper';
 import { MessagesService } from './messages.service';
 
 @Controller('messages')
@@ -19,34 +22,51 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   @Get()
-  public findAll(
+  public async findAll(
     @Query('search') search?: string,
-  ): Promise<MessageResponseDto | MessageResponseDto[]> {
-    return this.messagesService.findAll(search);
+  ): Promise<MessageResponseDto[]> {
+    const messages = await this.messagesService.findAll(search);
+    return MessageResponseMapper.toResponseMany(messages);
   }
 
   @Get(':id')
-  public findOne(
-    @Param('id') id: number,
-  ): Promise<MessageResponseDto | MessageResponseDto[]> {
-    return this.messagesService.findOne(id);
+  public async findOne(@Param('id') id: number): Promise<MessageResponseDto> {
+    const message = await this.messagesService.findOne(id);
+    return MessageResponseMapper.toResponseOne(message);
   }
 
   @Post()
-  public create(@Body() dto: CreateMessageDto): Promise<DefaultResponseDto> {
-    return this.messagesService.create(dto);
+  public async create(
+    @Body() dto: CreateMessageDto,
+  ): Promise<DefaultResponseDto> {
+    const message = await this.messagesService.create(dto);
+    return ResponseMapper.toResponse(
+      DefaultResponseDto,
+      message.id,
+      'Message created successfully',
+    );
   }
 
   @Patch(':id')
-  public update(
+  public async update(
     @Param('id') id: number,
     @Body() dto: UpdateMessageDto,
-  ): Promise<DefaultResponseDto> {
-    return this.messagesService.update(id, dto);
+  ): Promise<DefaultMessageResponseDto> {
+    await this.messagesService.update(id, dto);
+    return ResponseMapper.toResponse(
+      DefaultMessageResponseDto,
+      'Message updated successfully',
+    );
   }
 
   @Delete(':id')
-  public delete(@Param('id') id: number): Promise<DefaultResponseDto> {
-    return this.messagesService.delete(id);
+  public async delete(
+    @Param('id') id: number,
+  ): Promise<DefaultMessageResponseDto> {
+    await this.messagesService.delete(id);
+    return ResponseMapper.toResponse(
+      DefaultMessageResponseDto,
+      'Message deleted successfully',
+    );
   }
 }

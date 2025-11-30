@@ -1,14 +1,10 @@
 import { Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
-import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { UsersService } from 'src/modules/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
-import { MessageResponseDto } from './dtos/MessageResponse.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
 import { MessageEntity } from './entities/message.entity';
-import { MessageResponseMapper } from './mappers/message-response.mapper';
 
 /*
   Scope.DEFAULT = The Provider In Question Is a Singleton.
@@ -24,54 +20,33 @@ export class MessagesService {
     private readonly usersService: UsersService,
   ) {}
 
-  public async findAll(
-    search?: string,
-  ): Promise<MessageResponseDto | MessageResponseDto[]> {
+  public findAll(search?: string): Promise<MessageEntity[]> {
     if (search) console.log(search);
-    const messages = await this.messagesRepository.find();
-    return MessageResponseMapper.toResponse(messages);
+    return this.messagesRepository.find();
   }
 
-  public async findOne(
-    id: number,
-  ): Promise<MessageResponseDto | MessageResponseDto[]> {
-    const message = await this.getMessageById(id);
-    return MessageResponseMapper.toResponse(message);
+  public findOne(id: number): Promise<MessageEntity> {
+    return this.getMessageById(id);
   }
 
-  public async create(dto: CreateMessageDto): Promise<DefaultResponseDto> {
-    const sender = await this.usersService.getUserById(dto.sender);
-    const recipient = await this.usersService.getUserById(dto.recipient);
-    const message = await this.messagesRepository.save({
+  public async create(dto: CreateMessageDto): Promise<MessageEntity> {
+    const sender = await this.usersService.findOne(dto.sender);
+    const recipient = await this.usersService.findOne(dto.recipient);
+    return this.messagesRepository.save({
       content: dto.content,
       sender: sender,
       recipient: recipient,
     });
-    return ResponseMapper.toAResponse(
-      message.id,
-      'Message created successfully',
-    );
   }
 
-  public async update(
-    id: number,
-    dto: UpdateMessageDto,
-  ): Promise<DefaultResponseDto> {
+  public async update(id: number, dto: UpdateMessageDto): Promise<void> {
     const message = await this.getMessageById(id);
     await this.messagesRepository.update(message.id, dto);
-    return ResponseMapper.toAResponse(
-      message.id,
-      'Message updated successfully',
-    );
   }
 
-  public async delete(id: number): Promise<DefaultResponseDto> {
+  public async delete(id: number): Promise<void> {
     const message = await this.getMessageById(id);
     await this.messagesRepository.delete(message.id);
-    return ResponseMapper.toAResponse(
-      message.id,
-      'Message deleted successfully',
-    );
   }
 
   private async getMessageById(id: number): Promise<MessageEntity> {
