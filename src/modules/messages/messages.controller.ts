@@ -7,9 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
 import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { MessageResponseDto } from './dtos/MessageResponse.dto';
@@ -18,6 +20,7 @@ import { MessageResponseMapper } from './mappers/message-response.mapper';
 import { MessagesService } from './messages.service';
 
 @Controller('messages')
+@UseGuards(AuthGuard)
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 

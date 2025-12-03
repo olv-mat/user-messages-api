@@ -6,9 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from 'src/common/decorators/request-payload.decorator';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
 import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { CreateUserDto } from './dtos/CreateUser.dto';
 import { UpdateUserDto } from './dtos/UpdateUser.dto';
@@ -17,6 +20,7 @@ import { UserResponseMapper } from './mappers/user-response.mapper';
 import { UsersService } from './users.service';
 
 @Controller('users')
+@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -26,9 +30,11 @@ export class UsersController {
     return UserResponseMapper.toResponseMany(users);
   }
 
-  @Get(':id')
-  public async findOne(@Param('id') id: number): Promise<UserResponseDto> {
-    const user = await this.usersService.findOne(id);
+  @Get('/me')
+  public async findOne(
+    @CurrentUser('sub') sub: number,
+  ): Promise<UserResponseDto> {
+    const user = await this.usersService.findOne(sub);
     return UserResponseMapper.toResponseOne(user);
   }
 
