@@ -15,12 +15,13 @@ import { AuthService } from './auth.service';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get('JWT_SECRET'),
+      global: true,
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
         signOptions: {
-          audience: config.get('JWT_AUDIENCE'),
-          issuer: config.get('JWT_ISSUER'),
-          expiresIn: config.get('JWT_TTL'),
+          audience: configService.get('JWT_AUDIENCE'),
+          issuer: configService.get('JWT_ISSUER'),
+          expiresIn: parseInt(configService.get('JWT_TTL')!),
         },
       }),
     }),

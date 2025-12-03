@@ -22,8 +22,8 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  public findOne(id: number): Promise<UserEntity> {
-    return this.getUserById(id);
+  public findOne(sub: number): Promise<UserEntity> {
+    return this.getUserById(sub);
   }
 
   public async create(dto: CreateUserDto): Promise<UserEntity> {

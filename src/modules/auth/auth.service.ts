@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserInterface } from 'src/common/interfaces/user.interface';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
 import { UserEntity } from '../users/entities/user.entity';
@@ -26,10 +27,11 @@ export class AuthService {
   }
 
   private async generateToken(user: UserEntity): Promise<string> {
-    return await this.jwtService.signAsync({
+    const payload: UserInterface = {
       sub: user.id,
       name: user.name,
       email: user.email,
-    });
+    };
+    return await this.jwtService.signAsync(payload);
   }
 }
