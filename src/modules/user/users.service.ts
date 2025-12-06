@@ -49,8 +49,8 @@ export class UserService {
     await this.usersRepository.update(userEntity.id, payload);
   }
 
-  public async delete(id: number): Promise<void> {
-    const userEntity = await this.getUserById(id);
+  public async delete(sub: number): Promise<void> {
+    const userEntity = await this.getUserById(sub);
     await this.usersRepository.delete(userEntity.id);
   }
 

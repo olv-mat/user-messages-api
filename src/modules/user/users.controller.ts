@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Patch,
   UseGuards,
 } from '@nestjs/common';
@@ -48,11 +47,12 @@ export class UserController {
     );
   }
 
-  @Delete(':id')
+  @Delete('/me')
+  @UseGuards(AuthGuard)
   public async delete(
-    @Param('id') id: number,
+    @CurrentUser('sub') sub: number,
   ): Promise<DefaultMessageResponseDto> {
-    await this.userService.delete(id);
+    await this.userService.delete(sub);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'User deleted successfully',
