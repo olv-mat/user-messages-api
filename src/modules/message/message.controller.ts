@@ -30,14 +30,14 @@ export class MessageController {
   public async findAll(
     @Query('search') search?: string,
   ): Promise<MessageResponseDto[]> {
-    const messages = await this.messageService.findAll(search);
-    return MessageResponseMapper.toResponseMany(messages);
+    const messageEntities = await this.messageService.findAll(search);
+    return MessageResponseMapper.toResponseMany(messageEntities);
   }
 
   @Get(':id')
   public async findOne(@Param('id') id: number): Promise<MessageResponseDto> {
-    const message = await this.messageService.findOne(id);
-    return MessageResponseMapper.toResponseOne(message);
+    const messageEntity = await this.messageService.findOne(id);
+    return MessageResponseMapper.toResponseOne(messageEntity);
   }
 
   @Post()
@@ -57,8 +57,9 @@ export class MessageController {
   public async update(
     @Param('id') id: number,
     @Body() dto: UpdateMessageDto,
+    @CurrentUser() user: UserInterface,
   ): Promise<DefaultMessageResponseDto> {
-    await this.messageService.update(id, dto);
+    await this.messageService.update(id, dto, user);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'Message updated successfully',
@@ -68,8 +69,9 @@ export class MessageController {
   @Delete(':id')
   public async delete(
     @Param('id') id: number,
+    @CurrentUser() user: UserInterface,
   ): Promise<DefaultMessageResponseDto> {
-    await this.messageService.delete(id);
+    await this.messageService.delete(id, user);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'Message deleted successfully',

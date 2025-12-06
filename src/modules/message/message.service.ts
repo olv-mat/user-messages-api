@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, Scope } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  Scope,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserInterface } from 'src/common/interfaces/user.interface';
 import { UserService } from 'src/modules/user/user.service';
@@ -43,21 +48,36 @@ export class MessageService {
     });
   }
 
-  public async update(id: number, dto: UpdateMessageDto): Promise<void> {
-    const message = await this.getMessageById(id);
-    await this.messagesRepository.update(message.id, dto);
+  public async update(
+    id: number,
+    dto: UpdateMessageDto,
+    user: UserInterface,
+  ): Promise<void> {
+    const messageEntity = await this.getMessageById(id);
+    this.assertMessageOwner(messageEntity, user);
+    await this.messagesRepository.update(messageEntity.id, dto);
   }
 
-  public async delete(id: number): Promise<void> {
-    const message = await this.getMessageById(id);
-    await this.messagesRepository.delete(message.id);
+  public async delete(id: number, user: UserInterface): Promise<void> {
+    const messageEntity = await this.getMessageById(id);
+    this.assertMessageOwner(messageEntity, user);
+    await this.messagesRepository.delete(messageEntity.id);
+  }
+
+  private assertMessageOwner(
+    messageEntity: MessageEntity,
+    user: UserInterface,
+  ): void {
+    if (messageEntity.sender.id !== user.sub) {
+      throw new ForbiddenException('You cannot perform this action');
+    }
   }
 
   private async getMessageById(id: number): Promise<MessageEntity> {
-    const message = await this.messagesRepository.findOne({
+    const messageEntity = await this.messagesRepository.findOne({
       where: { id: id },
     });
-    if (!message) throw new NotFoundException('Message not found');
-    return message;
+    if (!messageEntity) throw new NotFoundException('Message not found');
+    return messageEntity;
   }
 }
