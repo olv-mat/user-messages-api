@@ -34,8 +34,8 @@ export class UserService {
     });
   }
 
-  public async update(id: number, dto: UpdateUserDto): Promise<void> {
-    const userEntity = await this.getUserById(id);
+  public async update(sub: number, dto: UpdateUserDto): Promise<void> {
+    const userEntity = await this.getUserById(sub);
     const payload: Partial<UserEntity> = { ...dto };
 
     if (payload.email && payload.email != userEntity.email) {

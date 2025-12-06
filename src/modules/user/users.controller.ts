@@ -17,7 +17,6 @@ import { UserResponseMapper } from './mappers/user-response.mapper';
 import { UserService } from './users.service';
 
 @Controller('users')
-@UseGuards(AuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -28,6 +27,7 @@ export class UserController {
   }
 
   @Get('/me')
+  @UseGuards(AuthGuard)
   public async findOne(
     @CurrentUser('sub') sub: number,
   ): Promise<UserResponseDto> {
@@ -35,12 +35,13 @@ export class UserController {
     return UserResponseMapper.toResponseOne(userEntity);
   }
 
-  @Patch(':id')
+  @Patch('/me')
+  @UseGuards(AuthGuard)
   public async update(
-    @Param('id') id: number,
+    @CurrentUser('sub') sub: number,
     @Body() dto: UpdateUserDto,
   ): Promise<DefaultMessageResponseDto> {
-    await this.userService.update(id, dto);
+    await this.userService.update(sub, dto);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'User updated successfully',
