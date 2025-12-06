@@ -4,6 +4,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomExceptionFilter } from './common/filters/custom-exception.filter';
 import { RequestUuidMiddleware } from './common/middlewares/request-uuid.middleware';
+import { CryptographyModule } from './common/modules/cryptography/cryptography.module';
+import { TokenModule } from './common/modules/token/token.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
 import { MessagesModule } from './modules/messages/messages.module';
@@ -24,21 +26,23 @@ import { UsersModule } from './modules/users/users.module';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        host: config.get('DATABASE_HOST'),
-        port: config.get('DATABASE_PORT'),
-        username: config.get('DATABASE_USERNAME'),
-        password: config.get('DATABASE_PASSWORD'),
-        database: config.get('DATABASE_NAME'),
+        host: configService.get('DATABASE_HOST'),
+        port: configService.get('DATABASE_PORT'),
+        username: configService.get('DATABASE_USERNAME'),
+        password: configService.get('DATABASE_PASSWORD'),
+        database: configService.get('DATABASE_NAME'),
         autoLoadEntities: true,
         synchronize: true,
       }),
     }),
+    CryptographyModule,
+    TokenModule,
+    AuthModule,
     HealthModule,
     MessagesModule,
     UsersModule,
-    AuthModule,
   ],
   controllers: [],
   providers: [

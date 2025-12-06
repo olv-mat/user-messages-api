@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
 import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
-import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
+import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { MessageResponseDto } from './dtos/MessageResponse.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';

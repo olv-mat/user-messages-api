@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { UserInterface } from 'src/common/interfaces/user.interface';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
+import { TokenService } from 'src/common/modules/token/token.service';
 import { UserEntity } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dtos/Login.dto';
@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly cryptographyService: CryptographyService,
-    private readonly jwtService: JwtService,
+    private readonly tokenService: TokenService,
   ) {}
 
   public async login(dto: LoginDto): Promise<LoginResponseDto> {
@@ -32,6 +32,6 @@ export class AuthService {
       name: user.name,
       email: user.email,
     };
-    return await this.jwtService.signAsync(payload);
+    return await this.tokenService.sign(payload);
   }
 }

@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
-import { BcryptService } from './bcrypt.service';
+import { Global, Module } from '@nestjs/common';
+import { BcryptServiceImplementation } from './bcrypt.service';
 import { CryptographyService } from './cryptography.service';
 
+@Global()
 @Module({
   providers: [
     {
       provide: CryptographyService,
-      useClass: BcryptService,
+      useClass: BcryptServiceImplementation,
     },
   ],
   exports: [CryptographyService],

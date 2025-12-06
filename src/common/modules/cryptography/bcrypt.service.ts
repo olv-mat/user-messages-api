@@ -8,13 +8,13 @@ import { CryptographyService } from './cryptography.service';
 */
 
 @Injectable()
-export class BcryptService extends CryptographyService {
+export class BcryptServiceImplementation extends CryptographyService {
   public async hash(password: string): Promise<string> {
     const salt = await bcrypt.genSalt();
-    return await bcrypt.hash(password, salt);
+    return bcrypt.hash(password, salt);
   }
 
-  public async compare(password: string, hash: string): Promise<boolean> {
+  public compare(password: string, hash: string): Promise<boolean> {
     return bcrypt.compare(password, hash);
   }
 }
