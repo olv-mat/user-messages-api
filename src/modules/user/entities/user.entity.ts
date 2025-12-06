@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
-import { MessageEntity } from 'src/modules/messages/entities/message.entity';
+import { MessageEntity } from 'src/modules/message/entities/message.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity('users')

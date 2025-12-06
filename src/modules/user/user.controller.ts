@@ -13,7 +13,7 @@ import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 import { UpdateUserDto } from './dtos/UpdateUser.dto';
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { UserResponseMapper } from './mappers/user-response.mapper';
-import { UserService } from './users.service';
+import { UserService } from './user.service';
 
 @Controller('users')
 export class UserController {

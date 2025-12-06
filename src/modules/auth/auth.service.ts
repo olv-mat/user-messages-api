@@ -3,7 +3,7 @@ import { UserInterface } from 'src/common/interfaces/user.interface';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
 import { TokenService } from 'src/common/modules/token/token.service';
 import { UserEntity } from '../user/entities/user.entity';
-import { UserService } from '../user/users.service';
+import { UserService } from '../user/user.service';
 import { LoginDto } from './dtos/Login.dto';
 import { RegisterDto } from './dtos/Register.dto';
 

@@ -17,24 +17,24 @@ import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { MessageResponseDto } from './dtos/MessageResponse.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
 import { MessageResponseMapper } from './mappers/message-response.mapper';
-import { MessagesService } from './messages.service';
+import { MessageService } from './message.service';
 
 @Controller('messages')
 @UseGuards(AuthGuard)
-export class MessagesController {
-  constructor(private readonly messagesService: MessagesService) {}
+export class MessageController {
+  constructor(private readonly messageService: MessageService) {}
 
   @Get()
   public async findAll(
     @Query('search') search?: string,
   ): Promise<MessageResponseDto[]> {
-    const messages = await this.messagesService.findAll(search);
+    const messages = await this.messageService.findAll(search);
     return MessageResponseMapper.toResponseMany(messages);
   }
 
   @Get(':id')
   public async findOne(@Param('id') id: number): Promise<MessageResponseDto> {
-    const message = await this.messagesService.findOne(id);
+    const message = await this.messageService.findOne(id);
     return MessageResponseMapper.toResponseOne(message);
   }
 
@@ -42,7 +42,7 @@ export class MessagesController {
   public async create(
     @Body() dto: CreateMessageDto,
   ): Promise<DefaultResponseDto> {
-    const message = await this.messagesService.create(dto);
+    const message = await this.messageService.create(dto);
     return ResponseMapper.toResponse(
       DefaultResponseDto,
       message.id,
@@ -55,7 +55,7 @@ export class MessagesController {
     @Param('id') id: number,
     @Body() dto: UpdateMessageDto,
   ): Promise<DefaultMessageResponseDto> {
-    await this.messagesService.update(id, dto);
+    await this.messageService.update(id, dto);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'Message updated successfully',
@@ -66,7 +66,7 @@ export class MessagesController {
   public async delete(
     @Param('id') id: number,
   ): Promise<DefaultMessageResponseDto> {
-    await this.messagesService.delete(id);
+    await this.messageService.delete(id);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'Message deleted successfully',

@@ -8,8 +8,8 @@ import { CryptographyModule } from './common/modules/cryptography/cryptography.m
 import { TokenModule } from './common/modules/token/token.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
-import { MessagesModule } from './modules/messages/messages.module';
-import { UserModule } from './modules/user/users.module';
+import { MessageModule } from './modules/message/message.module';
+import { UserModule } from './modules/user/user.module';
 
 // nest generate resource <resource> (nest g res <resource>)
 
@@ -41,7 +41,7 @@ import { UserModule } from './modules/user/users.module';
     TokenModule,
     AuthModule,
     HealthModule,
-    MessagesModule,
+    MessageModule,
     UserModule,
   ],
   controllers: [],
