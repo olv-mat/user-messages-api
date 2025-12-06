@@ -9,8 +9,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from 'src/common/decorators/request-payload.decorator';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
 import { DefaultResponseDto } from 'src/common/dtos/DefaultResponse.dto';
+import type { UserInterface } from 'src/common/interfaces/user.interface';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
@@ -41,8 +43,9 @@ export class MessageController {
   @Post()
   public async create(
     @Body() dto: CreateMessageDto,
+    @CurrentUser() user: UserInterface,
   ): Promise<DefaultResponseDto> {
-    const message = await this.messageService.create(dto);
+    const message = await this.messageService.create(dto, user);
     return ResponseMapper.toResponse(
       DefaultResponseDto,
       message.id,

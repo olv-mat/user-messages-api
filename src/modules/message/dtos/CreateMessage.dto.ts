@@ -14,9 +14,5 @@ export class CreateMessageDto {
 
   @IsInt()
   @IsPositive()
-  public readonly sender: number;
-
-  @IsInt()
-  @IsPositive()
   public readonly recipient: number;
 }

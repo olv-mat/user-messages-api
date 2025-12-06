@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserInterface } from 'src/common/interfaces/user.interface';
 import { UserService } from 'src/modules/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
@@ -29,8 +30,11 @@ export class MessageService {
     return this.getMessageById(id);
   }
 
-  public async create(dto: CreateMessageDto): Promise<MessageEntity> {
-    const sender = await this.userService.findOne(dto.sender);
+  public async create(
+    dto: CreateMessageDto,
+    user: UserInterface,
+  ): Promise<MessageEntity> {
+    const sender = await this.userService.findOne(user.sub);
     const recipient = await this.userService.findOne(dto.recipient);
     return this.messagesRepository.save({
       content: dto.content,
