@@ -1,29 +1,43 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserInterface } from 'src/common/interfaces/user.interface';
-import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
 import { TokenService } from 'src/common/modules/token/token.service';
-import { UserEntity } from '../users/entities/user.entity';
-import { UsersService } from '../users/users.service';
+import { UserEntity } from '../user/entities/user.entity';
+import { UserService } from '../user/users.service';
 import { LoginDto } from './dtos/Login.dto';
-import { LoginResponseDto } from './dtos/LoginResponse.dto';
+import { RegisterDto } from './dtos/Register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly userService: UserService,
     private readonly cryptographyService: CryptographyService,
     private readonly tokenService: TokenService,
   ) {}
 
-  public async login(dto: LoginDto): Promise<LoginResponseDto> {
-    const user = await this.usersService.getUserByEmail(dto.email);
+  public async login(dto: LoginDto): Promise<{
+    userEntity: UserEntity;
+    token: string;
+  }> {
+    const userEntity = await this.userService.getUserByEmail(dto.email);
     const isValid =
-      user &&
-      (await this.cryptographyService.compare(dto.password, user.password));
+      userEntity &&
+      (await this.cryptographyService.compare(
+        dto.password,
+        userEntity.password,
+      ));
     if (!isValid) throw new UnauthorizedException('Invalid credentials');
-    const token = await this.generateToken(user);
-    return ResponseMapper.toResponse(LoginResponseDto, token);
+    const token = await this.generateToken(userEntity);
+    return { userEntity, token };
+  }
+
+  public async register(dto: RegisterDto): Promise<{
+    userEntity: UserEntity;
+    token: string;
+  }> {
+    const userEntity = await this.userService.create(dto);
+    const token = await this.generateToken(userEntity);
+    return { userEntity, token };
   }
 
   private async generateToken(user: UserEntity): Promise<string> {

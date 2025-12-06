@@ -9,7 +9,7 @@ import { TokenModule } from './common/modules/token/token.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
 import { MessagesModule } from './modules/messages/messages.module';
-import { UsersModule } from './modules/users/users.module';
+import { UserModule } from './modules/user/users.module';
 
 // nest generate resource <resource> (nest g res <resource>)
 
@@ -42,7 +42,7 @@ import { UsersModule } from './modules/users/users.module';
     AuthModule,
     HealthModule,
     MessagesModule,
-    UsersModule,
+    UserModule,
   ],
   controllers: [],
   providers: [

@@ -1,4 +1,4 @@
-import { UserResponseMapper } from 'src/modules/users/mappers/user-response.mapper';
+import { UserResponseMapper } from 'src/modules/user/mappers/user-response.mapper';
 import { MessageResponseDto } from '../dtos/MessageResponse.dto';
 import { MessageEntity } from '../entities/message.entity';
 

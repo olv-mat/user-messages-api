@@ -1,4 +1,4 @@
-import { UserResponseDto } from 'src/modules/users/dtos/UserResponse.dto';
+import { UserResponseDto } from 'src/modules/user/dtos/UserResponse.dto';
 
 export class MessageResponseDto {
   public readonly id: number;

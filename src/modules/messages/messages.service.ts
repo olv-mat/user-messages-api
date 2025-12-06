@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsersService } from 'src/modules/users/users.service';
+import { UserService } from 'src/modules/user/users.service';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
@@ -17,7 +17,7 @@ export class MessagesService {
   constructor(
     @InjectRepository(MessageEntity)
     private readonly messagesRepository: Repository<MessageEntity>,
-    private readonly usersService: UsersService,
+    private readonly userService: UserService,
   ) {}
 
   public findAll(search?: string): Promise<MessageEntity[]> {
@@ -30,8 +30,8 @@ export class MessagesService {
   }
 
   public async create(dto: CreateMessageDto): Promise<MessageEntity> {
-    const sender = await this.usersService.findOne(dto.sender);
-    const recipient = await this.usersService.findOne(dto.recipient);
+    const sender = await this.userService.findOne(dto.sender);
+    const recipient = await this.userService.findOne(dto.recipient);
     return this.messagesRepository.save({
       content: dto.content,
       sender: sender,
