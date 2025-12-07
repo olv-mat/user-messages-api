@@ -1,9 +1,11 @@
 export class AuthResponseDto {
-  public readonly id: string;
-  public readonly token: string;
+  public readonly sub: number;
+  public readonly accessToken: string;
+  public readonly refreshToken: string;
 
-  constructor(id: string, token: string) {
-    this.id = id;
-    this.token = token;
+  constructor(sub: number, accessToken: string, refreshToken: string) {
+    this.sub = sub;
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
   }
 }

@@ -1,5 +1,4 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { AuthService } from './auth.service';
 import { AuthResponseDto } from './dtos/AuthResponse.dto';
 import { LoginDto } from './dtos/Login.dto';
@@ -10,14 +9,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/login')
-  public async login(@Body() dto: LoginDto) {
-    const { userEntity, token } = await this.authService.login(dto);
-    return ResponseMapper.toResponse(AuthResponseDto, userEntity.id, token);
+  public login(@Body() dto: LoginDto): Promise<AuthResponseDto> {
+    return this.authService.login(dto);
   }
 
   @Post('/register')
-  public async register(@Body() dto: RegisterDto) {
-    const { userEntity, token } = await this.authService.register(dto);
-    return ResponseMapper.toResponse(AuthResponseDto, userEntity.id, token);
+  public register(@Body() dto: RegisterDto) {
+    return this.authService.register(dto);
   }
 }

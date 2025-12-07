@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserInterface } from 'src/common/interfaces/user.interface';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
 import { TokenService } from 'src/common/modules/token/token.service';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
+import { AuthResponseDto } from './dtos/AuthResponse.dto';
 import { LoginDto } from './dtos/Login.dto';
 import { RegisterDto } from './dtos/Register.dto';
 
@@ -15,10 +15,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  public async login(dto: LoginDto): Promise<{
-    userEntity: UserEntity;
-    token: string;
-  }> {
+  public async login(dto: LoginDto): Promise<AuthResponseDto> {
     const userEntity = await this.userService.getUserByEmail(dto.email);
     const isValid =
       userEntity &&
@@ -27,25 +24,21 @@ export class AuthService {
         userEntity.password,
       ));
     if (!isValid) throw new UnauthorizedException('Invalid credentials');
-    const token = await this.generateToken(userEntity);
-    return { userEntity, token };
+    return this.generateTokens(userEntity);
   }
 
-  public async register(dto: RegisterDto): Promise<{
-    userEntity: UserEntity;
-    token: string;
-  }> {
+  public async register(dto: RegisterDto): Promise<AuthResponseDto> {
     const userEntity = await this.userService.create(dto);
-    const token = await this.generateToken(userEntity);
-    return { userEntity, token };
+    return this.generateTokens(userEntity);
   }
 
-  private async generateToken(user: UserEntity): Promise<string> {
-    const payload: UserInterface = {
+  private async generateTokens(user: UserEntity): Promise<AuthResponseDto> {
+    const accessToken = await this.tokenService.sign({
       sub: user.id,
       name: user.name,
       email: user.email,
-    };
-    return await this.tokenService.sign(payload);
+    });
+    const refreshToken = await this.tokenService.refresh({ sub: user.id });
+    return new AuthResponseDto(user.id, accessToken, refreshToken);
   }
 }

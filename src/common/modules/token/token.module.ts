@@ -13,11 +13,11 @@ import { TokenService } from './token.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
+        secret: configService.getOrThrow('JWT_SECRET'),
         signOptions: {
-          audience: configService.get('JWT_AUDIENCE'),
-          issuer: configService.get('JWT_ISSUER'),
-          expiresIn: parseInt(configService.get('JWT_TTL')!),
+          audience: configService.getOrThrow('JWT_AUDIENCE'),
+          issuer: configService.getOrThrow('JWT_ISSUER'),
+          expiresIn: parseInt(configService.getOrThrow('JWT_TTL')),
         },
       }),
     }),
