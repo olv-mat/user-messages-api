@@ -1,11 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserInterface } from 'src/common/interfaces/user.interface';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
 import { TokenService } from 'src/common/modules/token/token.service';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { AuthResponseDto } from './dtos/AuthResponse.dto';
 import { LoginDto } from './dtos/Login.dto';
+import { RefreshTokenDto } from './dtos/RefreshToken.dto';
 import { RegisterDto } from './dtos/Register.dto';
+
+type TokenSubject = Pick<UserInterface, 'sub'>;
 
 @Injectable()
 export class AuthService {
@@ -29,6 +33,14 @@ export class AuthService {
 
   public async register(dto: RegisterDto): Promise<AuthResponseDto> {
     const userEntity = await this.userService.create(dto);
+    return this.generateTokens(userEntity);
+  }
+
+  public async refresh(dto: RefreshTokenDto): Promise<AuthResponseDto> {
+    const { sub } = await this.tokenService.verify<TokenSubject>(
+      dto.refreshToken,
+    );
+    const userEntity = await this.userService.findOne(sub);
     return this.generateTokens(userEntity);
   }
 
