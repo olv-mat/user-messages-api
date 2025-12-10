@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { SERVER_NAME } from 'src/common/constants/server-name.constant';
+import { SERVER_NAME } from 'src/modules/health/constants/server-name.constant';
 
 @Injectable()
 export class HealthService {
