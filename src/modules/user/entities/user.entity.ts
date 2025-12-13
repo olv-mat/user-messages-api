@@ -1,4 +1,5 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { RoutePolicies } from 'src/modules/auth/enums/route-policies.enum';
 import { MessageEntity } from 'src/modules/message/entities/message.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
@@ -12,6 +13,9 @@ export class UserEntity extends BaseEntity {
 
   @Column()
   password: string;
+
+  @Column({ type: 'simple-array', nullable: true })
+  policies: RoutePolicies[];
 
   // Messages Sent By The User
   @OneToMany(() => MessageEntity, (message) => message.sender)

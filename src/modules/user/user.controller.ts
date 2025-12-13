@@ -6,7 +6,7 @@ import {
   Patch,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from 'src/common/decorators/request-payload.decorator';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { SetRoutePolicy } from 'src/common/decorators/set-route-policy.decorator';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
