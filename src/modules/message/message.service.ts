@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserInterface } from 'src/common/interfaces/user.interface';
 import { UserService } from 'src/modules/user/user.service';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
 import { MessageEntity } from './entities/message.entity';
@@ -27,7 +27,11 @@ export class MessageService {
   ) {}
 
   public findAll(search?: string): Promise<MessageEntity[]> {
-    if (search) console.log(search);
+    if (search) {
+      return this.messagesRepository.find({
+        where: { content: ILike(`%${search}%`) },
+      });
+    }
     return this.messagesRepository.find();
   }
 

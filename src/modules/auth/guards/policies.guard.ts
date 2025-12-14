@@ -23,6 +23,6 @@ export class PoliciesGuard implements CanActivate {
       context.getHandler(),
     );
     const userEntity = await this.userService.findOne(user.sub);
-    return userEntity.policies.includes(policy);
+    return userEntity.policies?.includes(policy);
   }
 }
