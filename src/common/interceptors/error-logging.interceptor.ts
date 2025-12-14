@@ -19,7 +19,7 @@ export class ErrorLoggingInterceptor implements NestInterceptor {
         const method = request.method;
         const url = request.url;
         if (error instanceof Error) {
-          this.logger.error(`${error.message} {${url}, ${method}}`);
+          this.logger.error(`${error.name} {${url}, ${method}}`);
         }
         return throwError(() => error);
       }),

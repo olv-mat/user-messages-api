@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomExceptionFilter } from './common/filters/custom-exception.filter';
 import { RequestUuidMiddleware } from './common/middlewares/request-uuid.middleware';
 import { CryptographyModule } from './common/modules/cryptography/cryptography.module';
+import { SeedModule } from './common/modules/seed/seed.module';
 import { TokenModule } from './common/modules/token/token.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
@@ -38,6 +39,7 @@ import { UserModule } from './modules/user/user.module';
       }),
     }),
     CryptographyModule,
+    SeedModule,
     TokenModule,
     AuthModule,
     HealthModule,

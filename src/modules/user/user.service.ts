@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RegisterRootUserDto } from 'src/modules/auth/dtos/RegisterRootUser.dto';
 import { Repository } from 'typeorm';
 import { CryptographyService } from '../../common/modules/cryptography/cryptography.service';
 import { RegisterDto } from '../auth/dtos/Register.dto';
@@ -26,7 +27,9 @@ export class UserService {
     return this.getUserById(sub);
   }
 
-  public async create(dto: RegisterDto): Promise<UserEntity> {
+  public async create(
+    dto: RegisterDto | RegisterRootUserDto,
+  ): Promise<UserEntity> {
     await this.assertEmailIsAvailable(dto.email);
     return this.usersRepository.save({
       ...dto,
