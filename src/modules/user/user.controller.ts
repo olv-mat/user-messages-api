@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   UseGuards,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 import { RoutePolicies } from '../auth/enums/route-policies.enum';
 import { PoliciesGuard } from '../auth/guards/policies.guard';
 import { UpdateUserDto } from './dtos/UpdateUser.dto';
+import { PoliciesDto } from './dtos/UpddatePolicies.dto';
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { UserResponseMapper } from './mappers/user-response.mapper';
 import { UserService } from './user.service';
@@ -48,6 +50,20 @@ export class UserController {
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'User updated successfully',
+    );
+  }
+
+  @Patch(':id/policies/grant')
+  @SetRoutePolicy(RoutePolicies.POLICIES_GRANT)
+  @UseGuards(PoliciesGuard)
+  public async grantPolicies(
+    @Param('id') id: number,
+    @Body() dto: PoliciesDto,
+  ): Promise<DefaultMessageResponseDto> {
+    await this.userService.grantPolicies(id, dto);
+    return ResponseMapper.toResponse(
+      DefaultMessageResponseDto,
+      'Policies successfully granted',
     );
   }
 

@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { CryptographyService } from '../../common/modules/cryptography/cryptography.service';
 import { RegisterDto } from '../auth/dtos/Register.dto';
 import { UpdateUserDto } from './dtos/UpdateUser.dto';
+import { PoliciesDto } from './dtos/UpddatePolicies.dto';
 import { UserEntity } from './entities/user.entity';
 
 @Injectable()
@@ -50,6 +51,17 @@ export class UserService {
     }
 
     await this.usersRepository.update(userEntity.id, payload);
+  }
+
+  public async grantPolicies(id: number, dto: PoliciesDto): Promise<void> {
+    const userEntity = await this.getUserById(id);
+    const currentPolicies = Array.isArray(userEntity.policies)
+      ? userEntity.policies
+      : [];
+    userEntity.policies = Array.from(
+      new Set([...currentPolicies, ...dto.policies]),
+    );
+    await this.usersRepository.save(userEntity);
   }
 
   public async delete(sub: number): Promise<void> {
