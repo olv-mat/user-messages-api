@@ -3,7 +3,10 @@ import { Request } from 'express';
 import { UserInterface } from '../interfaces/user.interface';
 
 export const CurrentUser = createParamDecorator(
-  (data: keyof UserInterface | undefined, context: ExecutionContext) => {
+  (
+    data: keyof UserInterface | undefined,
+    context: ExecutionContext,
+  ): unknown => {
     const request = context.switchToHttp().getRequest<Request>() as Request & {
       user: UserInterface;
     };

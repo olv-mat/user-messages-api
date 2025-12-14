@@ -13,7 +13,7 @@ export class RegisterRootUserSeed {
     private readonly userService: UserService,
   ) {}
 
-  public async run() {
+  public async run(): Promise<void> {
     const email = this.getCredential('ROOT_USER_EMAIL');
     const exists = await this.userService.getUserByEmail(email);
     if (exists) {

@@ -8,6 +8,7 @@ import { RegisterRootUserDto } from 'src/modules/auth/dtos/RegisterRootUser.dto'
 import { Repository } from 'typeorm';
 import { CryptographyService } from '../../common/modules/cryptography/cryptography.service';
 import { RegisterDto } from '../auth/dtos/Register.dto';
+import { RoutePolicies } from '../auth/enums/route-policies.enum';
 import { UpdateUserDto } from './dtos/UpdateUser.dto';
 import { PoliciesDto } from './dtos/UpddatePolicies.dto';
 import { UserEntity } from './entities/user.entity';
@@ -54,12 +55,19 @@ export class UserService {
   }
 
   public async grantPolicies(id: number, dto: PoliciesDto): Promise<void> {
-    const userEntity = await this.getUserById(id);
-    const currentPolicies = Array.isArray(userEntity.policies)
-      ? userEntity.policies
-      : [];
+    const { userEntity, currentPolicies } =
+      await this.getUserCurrentPolicies(id);
     userEntity.policies = Array.from(
       new Set([...currentPolicies, ...dto.policies]),
+    );
+    await this.usersRepository.save(userEntity);
+  }
+
+  public async revokePolicies(id: number, dto: PoliciesDto): Promise<void> {
+    const { userEntity, currentPolicies } =
+      await this.getUserCurrentPolicies(id);
+    userEntity.policies = currentPolicies.filter(
+      (policy) => !dto.policies.includes(policy),
     );
     await this.usersRepository.save(userEntity);
   }
@@ -85,5 +93,19 @@ export class UserService {
   private async assertEmailIsAvailable(email: string): Promise<void> {
     const userEntity = await this.usersRepository.findOneBy({ email: email });
     if (userEntity) throw new ConflictException('Email already in use');
+  }
+
+  private async getUserCurrentPolicies(id: number): Promise<{
+    userEntity: UserEntity;
+    currentPolicies: RoutePolicies[];
+  }> {
+    const userEntity = await this.getUserById(id);
+    const currentPolicies = Array.isArray(userEntity.policies)
+      ? userEntity.policies
+      : [];
+    return {
+      userEntity,
+      currentPolicies,
+    };
   }
 }

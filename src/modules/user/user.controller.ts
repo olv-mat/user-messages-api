@@ -67,6 +67,20 @@ export class UserController {
     );
   }
 
+  @Patch(':id/policies/revoke')
+  @SetRoutePolicy(RoutePolicies.POLICIES_REVOKE)
+  @UseGuards(PoliciesGuard)
+  public async revokePolicies(
+    @Param('id') id: number,
+    @Body() dto: PoliciesDto,
+  ): Promise<DefaultMessageResponseDto> {
+    await this.userService.revokePolicies(id, dto);
+    return ResponseMapper.toResponse(
+      DefaultMessageResponseDto,
+      'Policies successfully revoked',
+    );
+  }
+
   @Delete('/me')
   public async delete(
     @CurrentUser('sub') sub: number,
