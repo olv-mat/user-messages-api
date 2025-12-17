@@ -5,8 +5,12 @@ import {
   Get,
   Param,
   Patch,
+  Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { SetRoutePolicy } from 'src/common/decorators/set-route-policy.decorator';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
@@ -19,6 +23,8 @@ import { PoliciesDto } from './dtos/UpddatePolicies.dto';
 import { UserResponseDto } from './dtos/UserResponse.dto';
 import { UserResponseMapper } from './mappers/user-response.mapper';
 import { UserService } from './user.service';
+
+// npm i -D @types/multer
 
 @Controller('users')
 @UseGuards(AuthGuard)
@@ -39,6 +45,19 @@ export class UserController {
   ): Promise<UserResponseDto> {
     const userEntity = await this.userService.findOne(sub);
     return UserResponseMapper.toResponseOne(userEntity);
+  }
+
+  @Post('me/picture')
+  @UseInterceptors(FileInterceptor('file'))
+  public async uploadPicture(
+    @CurrentUser('sub') sub: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    await this.userService.uploadPicture(sub, file);
+    return ResponseMapper.toResponse(
+      DefaultMessageResponseDto,
+      'Profile picture uploaded successfully',
+    );
   }
 
   @Patch('/me')

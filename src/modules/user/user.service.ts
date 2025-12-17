@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { RegisterRootUserDto } from 'src/modules/auth/dtos/RegisterRootUser.dto';
 import { Repository } from 'typeorm';
 import { CryptographyService } from '../../common/modules/cryptography/cryptography.service';
@@ -27,6 +31,16 @@ export class UserService {
 
   public findOne(sub: number): Promise<UserEntity> {
     return this.getUserById(sub);
+  }
+
+  public async uploadPicture(
+    sub: number,
+    file: Express.Multer.File,
+  ): Promise<void> {
+    const extension = path.extname(file.originalname);
+    const fileName = `${sub}${extension}`;
+    const filePath = path.resolve(process.cwd(), 'pictures', fileName);
+    await fs.writeFile(filePath, file.buffer);
   }
 
   public async create(
