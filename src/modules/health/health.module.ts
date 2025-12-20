@@ -8,8 +8,8 @@ import { HealthService } from './health.service';
   providers: [
     HealthService,
     {
-      provide: SERVER_NAME, // Token
-      useValue: 'User Messages API Server', // Value
+      provide: SERVER_NAME,
+      useValue: 'User Messages API Server',
     },
   ],
 })

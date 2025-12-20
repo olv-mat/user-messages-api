@@ -24,8 +24,6 @@ import { UserResponseDto } from './dtos/UserResponse.dto';
 import { UserResponseMapper } from './mappers/user-response.mapper';
 import { UserService } from './user.service';
 
-// npm i -D @types/multer
-
 @Controller('users')
 @UseGuards(AuthGuard)
 export class UserController {
@@ -47,6 +45,7 @@ export class UserController {
     return UserResponseMapper.toResponseOne(userEntity);
   }
 
+  // npm i -D @types/multer
   @Post('me/picture')
   @UseInterceptors(FileInterceptor('file'))
   public async uploadPicture(
