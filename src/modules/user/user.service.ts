@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { RegisterRootUserDto } from 'src/modules/auth/dtos/RegisterRootUser.dto';
@@ -35,12 +36,13 @@ export class UserService {
 
   public async uploadPicture(
     sub: number,
-    file: Express.Multer.File,
+    picture: Express.Multer.File,
   ): Promise<void> {
-    const extension = path.extname(file.originalname);
-    const fileName = `${sub}${extension}`;
-    const filePath = path.resolve(process.cwd(), 'pictures', fileName);
-    await fs.writeFile(filePath, file.buffer);
+    const userEntity = await this.getUserById(sub);
+    const folder = path.resolve(process.cwd(), 'pictures', sub.toString());
+    await this.resetPictureFolder(folder);
+    userEntity.picture = await this.savePicture(picture, folder);
+    await this.usersRepository.save(userEntity);
   }
 
   public async create(
@@ -121,5 +123,21 @@ export class UserService {
       userEntity,
       currentPolicies,
     };
+  }
+
+  private async resetPictureFolder(folder: string): Promise<void> {
+    await fs.rm(folder, { recursive: true, force: true });
+    await fs.mkdir(folder, { recursive: true });
+  }
+
+  private async savePicture(
+    picture: Express.Multer.File,
+    folder: string,
+  ): Promise<string> {
+    const extension = path.extname(picture.originalname);
+    const pictureName = `${randomUUID()}${extension}`;
+    const fullPath = path.join(folder, pictureName);
+    await fs.writeFile(fullPath, picture.buffer);
+    return pictureName;
   }
 }

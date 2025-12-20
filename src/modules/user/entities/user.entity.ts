@@ -17,6 +17,9 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'simple-array', nullable: true })
   policies: RoutePolicies[];
 
+  @Column({ nullable: true })
+  picture: string;
+
   // Messages Sent By The User
   @OneToMany(() => MessageEntity, (message) => message.sender)
   sentMessages: MessageEntity[];

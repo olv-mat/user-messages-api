@@ -47,12 +47,12 @@ export class UserController {
 
   // npm i -D @types/multer
   @Post('me/picture')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('picture'))
   public async uploadPicture(
     @CurrentUser('sub') sub: number,
-    @PictureUpload() file: Express.Multer.File,
-  ) {
-    await this.userService.uploadPicture(sub, file);
+    @PictureUpload() picture: Express.Multer.File,
+  ): Promise<DefaultMessageResponseDto> {
+    await this.userService.uploadPicture(sub, picture);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'Profile picture uploaded successfully',
