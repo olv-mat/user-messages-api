@@ -6,12 +6,12 @@ import {
   Param,
   Patch,
   Post,
-  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { PictureUpload } from 'src/common/decorators/picture-upload.decorator';
 import { SetRoutePolicy } from 'src/common/decorators/set-route-policy.decorator';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
@@ -51,7 +51,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   public async uploadPicture(
     @CurrentUser('sub') sub: number,
-    @UploadedFile() file: Express.Multer.File,
+    @PictureUpload() file: Express.Multer.File,
   ) {
     await this.userService.uploadPicture(sub, file);
     return ResponseMapper.toResponse(
