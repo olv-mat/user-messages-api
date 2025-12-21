@@ -13,9 +13,9 @@ import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
 import { MessageEntity } from './entities/message.entity';
 
 /*
-  Scope.DEFAULT = The Provider In Question Is a Singleton
-  Scope.REQUEST = The Provider In Question Is Instantiated With Each Request
-  Scope.TRANSIENT = An Instance Of The Provider Is Created For Each Class That Injects It
+  Scope.DEFAULT: The Provider In Question Is a Singleton
+  Scope.REQUEST: The Provider In Question Is Instantiated With Each Request
+  Scope.TRANSIENT: An Instance Of The Provider Is Created For Each Class That Injects It
 */
 
 @Injectable({ scope: Scope.DEFAULT })
