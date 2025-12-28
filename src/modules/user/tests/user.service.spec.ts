@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
 import { makeRegisterDto } from 'src/common/tests/factories/register-dto.factory';
+import { makeUserEntity } from 'src/common/tests/factories/user-entity.factory';
 import { makeCryptographyServiceMock } from 'src/common/tests/mocks/cryptography-service.mock';
 import { makeRepositoryMock } from 'src/common/tests/mocks/repository.mock';
 import { Repository } from 'typeorm';
@@ -46,10 +47,13 @@ describe('UserService', () => {
       // Arrange
       const { userService, userRepository, cryptographyService } = context;
       const dto = makeRegisterDto();
-      const hashed = 'hashed';
-      jest.spyOn(cryptographyService, 'hash').mockResolvedValue(hashed);
+      const userEntity = makeUserEntity();
+      // Simulates that the email is available, the password is hashed, and the user is saved
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(null);
+      jest.spyOn(cryptographyService, 'hash').mockResolvedValue('');
+      jest.spyOn(userRepository, 'save').mockResolvedValue(userEntity);
       // Act
-      await userService.create(dto);
+      const result = await userService.create(dto);
       // Assert
       expect(userRepository.findOneBy).toHaveBeenCalledWith({
         email: dto.email,
@@ -57,8 +61,9 @@ describe('UserService', () => {
       expect(cryptographyService.hash).toHaveBeenCalledWith(dto.password);
       expect(userRepository.save).toHaveBeenCalledWith({
         ...dto,
-        password: hashed,
+        password: '',
       });
+      expect(result).toEqual(userEntity);
     });
   });
 });

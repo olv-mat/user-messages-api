@@ -15,16 +15,16 @@ export class UserEntity extends BaseEntity {
   password: string;
 
   @Column({ type: 'simple-array', nullable: true })
-  policies: RoutePolicies[];
+  policies: RoutePolicies[] | null;
 
   @Column({ nullable: true })
-  picture: string;
+  picture: string | null;
 
-  // Messages Sent By The User
+  // Messages sent by the user
   @OneToMany(() => MessageEntity, (message) => message.sender)
   sentMessages: MessageEntity[];
 
-  // Messages Received By The User
+  // Messages received by the user
   @OneToMany(() => MessageEntity, (message) => message.recipient)
   receivedMessages: MessageEntity[];
 }
