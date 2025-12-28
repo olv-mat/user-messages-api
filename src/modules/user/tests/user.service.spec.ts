@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { ConflictException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
@@ -43,27 +44,41 @@ describe('UserService', () => {
   });
 
   describe('create', () => {
-    it('should create a new user if the email is not in use', async () => {
-      // Arrange
+    it('should create a new user if the email is available', async () => {
+      // Arranges
       const { userService, userRepository, cryptographyService } = context;
-      const dto = makeRegisterDto();
+      const registerDto = makeRegisterDto();
       const userEntity = makeUserEntity();
-      // Simulates that the email is available, the password is hashed, and the user is saved
       jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(null);
       jest.spyOn(cryptographyService, 'hash').mockResolvedValue('');
       jest.spyOn(userRepository, 'save').mockResolvedValue(userEntity);
       // Act
-      const result = await userService.create(dto);
-      // Assert
+      const result = await userService.create(registerDto);
+      // Asserts
       expect(userRepository.findOneBy).toHaveBeenCalledWith({
-        email: dto.email,
+        email: registerDto.email,
       });
-      expect(cryptographyService.hash).toHaveBeenCalledWith(dto.password);
+      expect(cryptographyService.hash).toHaveBeenCalledWith(
+        registerDto.password,
+      );
       expect(userRepository.save).toHaveBeenCalledWith({
-        ...dto,
+        ...registerDto,
         password: '',
       });
       expect(result).toEqual(userEntity);
+    });
+
+    it('should throws a conflict exception if the email is unavailable', async () => {
+      // Arranges
+      const { userService, userRepository } = context;
+      const registerDto = makeRegisterDto();
+      const existingUser = makeUserEntity();
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(existingUser);
+      // Act & Asserts
+      await expect(userService.create(registerDto)).rejects.toThrow(
+        ConflictException,
+      );
+      expect(userRepository.save).not.toHaveBeenCalled();
     });
   });
 });
