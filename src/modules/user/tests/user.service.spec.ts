@@ -14,9 +14,9 @@ import { UserService } from '../user.service';
 // npm i --D @nestjs/testing
 
 type TestContext = {
-  userService: UserService;
-  userRepository: Repository<UserEntity>;
-  cryptographyService: CryptographyService;
+  service: UserService;
+  repository: Repository<UserEntity>;
+  cryptography: CryptographyService;
 };
 
 describe('UserService', () => {
@@ -37,48 +37,57 @@ describe('UserService', () => {
       ],
     }).compile();
     context = {
-      userService: module.get(UserService),
-      userRepository: module.get(getRepositoryToken(UserEntity)),
-      cryptographyService: module.get(CryptographyService),
+      service: module.get(UserService),
+      repository: module.get(getRepositoryToken(UserEntity)),
+      cryptography: module.get(CryptographyService),
     };
   });
 
+  describe('findAll', () => {
+    it('should return a list of users', async () => {
+      const { service, repository } = context;
+      const entities = [makeUserEntity()];
+      jest.spyOn(repository, 'find').mockResolvedValue(entities);
+      const result = await service.findAll();
+      expect(repository.find).toHaveBeenCalled();
+      expect(result).toEqual(entities);
+    });
+
+    it('should return an empty list if there are no users', async () => {
+      const { service, repository } = context;
+      const entities = [];
+      jest.spyOn(repository, 'find').mockResolvedValue(entities);
+      const result = await service.findAll();
+      expect(repository.find).toHaveBeenCalled();
+      expect(result).toEqual(entities);
+    });
+  });
+
   describe('create', () => {
-    it('should create a new user if the email is available', async () => {
-      // Arranges
-      const { userService, userRepository, cryptographyService } = context;
-      const registerDto = makeRegisterDto();
-      const userEntity = makeUserEntity();
-      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(null);
-      jest.spyOn(cryptographyService, 'hash').mockResolvedValue('');
-      jest.spyOn(userRepository, 'save').mockResolvedValue(userEntity);
-      // Act
-      const result = await userService.create(registerDto);
-      // Asserts
-      expect(userRepository.findOneBy).toHaveBeenCalledWith({
-        email: registerDto.email,
-      });
-      expect(cryptographyService.hash).toHaveBeenCalledWith(
-        registerDto.password,
-      );
-      expect(userRepository.save).toHaveBeenCalledWith({
-        ...registerDto,
+    it('should create a user if the email is available', async () => {
+      const { service, repository, cryptography } = context;
+      const dto = makeRegisterDto();
+      const entity = makeUserEntity();
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      jest.spyOn(cryptography, 'hash').mockResolvedValue('');
+      jest.spyOn(repository, 'save').mockResolvedValue(entity);
+      const result = await service.create(dto);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ email: dto.email });
+      expect(cryptography.hash).toHaveBeenCalledWith(dto.password);
+      expect(repository.save).toHaveBeenCalledWith({
+        ...dto,
         password: '',
       });
-      expect(result).toEqual(userEntity);
+      expect(result).toEqual(entity);
     });
 
     it('should throws a conflict exception if the email is unavailable', async () => {
-      // Arranges
-      const { userService, userRepository } = context;
-      const registerDto = makeRegisterDto();
-      const existingUser = makeUserEntity();
-      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(existingUser);
-      // Act & Asserts
-      await expect(userService.create(registerDto)).rejects.toThrow(
-        ConflictException,
-      );
-      expect(userRepository.save).not.toHaveBeenCalled();
+      const { service, repository } = context;
+      const dto = makeRegisterDto();
+      const entity = makeUserEntity();
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      expect(repository.save).not.toHaveBeenCalled();
     });
   });
 });
