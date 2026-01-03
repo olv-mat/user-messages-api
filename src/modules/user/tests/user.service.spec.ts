@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
@@ -63,6 +63,26 @@ describe('UserService', () => {
     });
   });
 
+  describe('findOne', () => {
+    it('should return a specific user', async () => {
+      const { service, repository } = context;
+      const sub = 1;
+      const entity = makeUserEntity();
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+      const result = await service.findOne(sub);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: sub });
+      expect(result).toEqual(entity);
+    });
+
+    it('should throw a not found exception if the user does not exist', async () => {
+      const { service, repository } = context;
+      const sub = 0;
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      await expect(service.findOne(sub)).rejects.toThrow(NotFoundException);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: sub });
+    });
+  });
+
   describe('create', () => {
     it('should create a user if the email is available', async () => {
       const { service, repository, cryptography } = context;
@@ -81,7 +101,7 @@ describe('UserService', () => {
       expect(result).toEqual(entity);
     });
 
-    it('should throws a conflict exception if the email is unavailable', async () => {
+    it('should throw a conflict exception if the email is unavailable', async () => {
       const { service, repository } = context;
       const dto = makeRegisterDto();
       const entity = makeUserEntity();
