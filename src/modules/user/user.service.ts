@@ -32,17 +32,6 @@ export class UserService {
     return this.getUserById(sub);
   }
 
-  public async uploadPicture(
-    sub: number,
-    picture: Express.Multer.File,
-  ): Promise<void> {
-    const userEntity = await this.getUserById(sub);
-    const folder = path.resolve(process.cwd(), 'pictures', sub.toString());
-    await this.resetPictureFolder(folder);
-    userEntity.picture = await this.savePicture(picture, folder);
-    await this.usersRepository.save(userEntity);
-  }
-
   public async create(
     dto: RegisterDto | RegisterRootUserDto,
   ): Promise<UserEntity> {
@@ -68,6 +57,22 @@ export class UserService {
     await this.usersRepository.update(userEntity.id, payload);
   }
 
+  public async delete(sub: number): Promise<void> {
+    const userEntity = await this.getUserById(sub);
+    await this.usersRepository.delete(userEntity.id);
+  }
+
+  public async uploadPicture(
+    sub: number,
+    picture: Express.Multer.File,
+  ): Promise<void> {
+    const userEntity = await this.getUserById(sub);
+    const folder = path.resolve(process.cwd(), 'pictures', sub.toString());
+    await this.resetPictureFolder(folder);
+    userEntity.picture = await this.savePicture(picture, folder);
+    await this.usersRepository.save(userEntity);
+  }
+
   public async grantPolicies(id: number, dto: PoliciesDto): Promise<void> {
     const { userEntity, currentPolicies } =
       await this.getUserCurrentPolicies(id);
@@ -84,11 +89,6 @@ export class UserService {
       (policy) => !dto.policies.includes(policy),
     );
     await this.usersRepository.save(userEntity);
-  }
-
-  public async delete(sub: number): Promise<void> {
-    const userEntity = await this.getUserById(sub);
-    await this.usersRepository.delete(userEntity.id);
   }
 
   public async getUserByEmail(email: string): Promise<UserEntity | null> {
