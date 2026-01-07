@@ -190,4 +190,24 @@ describe('UserService', () => {
       expect(repository.update).not.toHaveBeenCalled();
     });
   });
+
+  describe('delete', () => {
+    it('should delete a user', async () => {
+      const { service, repository } = context;
+      const sub = 1;
+      const entity = makeUserEntity();
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+      await service.delete(sub);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: sub });
+      expect(repository.delete).toHaveBeenCalledWith(entity.id);
+    });
+
+    it('should throw a not found exception when user does not exist', async () => {
+      const { service, repository } = context;
+      const sub = 0;
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      await expect(service.delete(sub)).rejects.toThrow(NotFoundException);
+      expect(repository.delete).not.toHaveBeenCalled();
+    });
+  });
 });
