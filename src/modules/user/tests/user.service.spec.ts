@@ -3,7 +3,10 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
+import * as fs from 'fs/promises';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
+import { makePicture } from 'src/common/tests/factories/picture.factory';
 import { makeRegisterDto } from 'src/common/tests/factories/register-dto.factory';
 import { makeUpdateUserDto } from 'src/common/tests/factories/update-user-dto.factory';
 import { makeUserEntity } from 'src/common/tests/factories/user-entity.factory';
@@ -20,6 +23,11 @@ type TestContext = {
   repository: Repository<UserEntity>;
   cryptography: CryptographyService;
 };
+
+jest.mock('fs/promises');
+jest.mock('crypto', () => ({
+  randomUUID: jest.fn(),
+}));
 
 describe('UserService', () => {
   let context: TestContext;
@@ -208,6 +216,41 @@ describe('UserService', () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       await expect(service.delete(sub)).rejects.toThrow(NotFoundException);
       expect(repository.delete).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('uploadPicture', () => {
+    it('should save the picture and update the user', async () => {
+      const { service, repository } = context;
+      const sub = 1;
+      const picture = makePicture();
+      const entity = makeUserEntity();
+      const uuid = '12b9d641-4d72-4a1e-82e1-1f911550b18a';
+
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+      (randomUUID as jest.Mock).mockReturnValue(uuid);
+
+      await service.uploadPicture(sub, picture);
+      expect(randomUUID).toHaveBeenCalled();
+      expect(fs.writeFile).toHaveBeenCalled();
+      expect(repository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          picture: expect.any(String),
+        }),
+      );
+    });
+
+    it('should throw a not found exception when user does not exist', async () => {
+      const { service, repository } = context;
+      const sub = 0;
+      const picture = makePicture();
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      await expect(service.uploadPicture(sub, picture)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(randomUUID).not.toHaveBeenCalled();
+      expect(fs.writeFile).not.toHaveBeenCalledWith();
+      expect(repository.save).not.toHaveBeenCalled();
     });
   });
 });
