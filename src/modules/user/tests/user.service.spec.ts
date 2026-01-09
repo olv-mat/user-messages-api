@@ -7,11 +7,13 @@ import { randomUUID } from 'crypto';
 import * as fs from 'fs/promises';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
 import { makePicture } from 'src/common/tests/factories/picture.factory';
+import { makePoliciesDto } from 'src/common/tests/factories/policies-dto.factory';
 import { makeRegisterDto } from 'src/common/tests/factories/register-dto.factory';
 import { makeUpdateUserDto } from 'src/common/tests/factories/update-user-dto.factory';
 import { makeUserEntity } from 'src/common/tests/factories/user-entity.factory';
-import { makeCryptographyServiceMock } from 'src/common/tests/mocks/cryptography-service.mock';
+import { makeCryptographyMock } from 'src/common/tests/mocks/cryptography.mock';
 import { makeRepositoryMock } from 'src/common/tests/mocks/repository.mock';
+import { RoutePolicies } from 'src/modules/auth/enums/route-policies.enum';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { UserService } from '../user.service';
@@ -42,7 +44,7 @@ describe('UserService', () => {
         },
         {
           provide: CryptographyService,
-          useValue: makeCryptographyServiceMock(),
+          useValue: makeCryptographyMock(),
         },
       ],
     }).compile();
@@ -250,6 +252,41 @@ describe('UserService', () => {
       );
       expect(randomUUID).not.toHaveBeenCalled();
       expect(fs.writeFile).not.toHaveBeenCalledWith();
+      expect(repository.save).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('grantPolicies', () => {
+    it('should merge current and new policies without duplicates and save user', async () => {
+      const { service, repository } = context;
+      const sub = 1;
+      const dto = makePoliciesDto();
+      const entity = makeUserEntity({
+        policies: [RoutePolicies.MESSAGE_FIND_ALL],
+      });
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+      jest.spyOn(repository, 'save').mockResolvedValue(entity);
+      await service.grantPolicies(sub, dto);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: sub });
+      expect(repository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          policies: expect.arrayContaining([
+            RoutePolicies.MESSAGE_FIND_ALL,
+            RoutePolicies.USER_FIND_ALL,
+          ]),
+        }),
+      );
+    });
+
+    it('should throw a not found exception when user does not exist', async () => {
+      const { service, repository } = context;
+      const sub = 0;
+      const dto = makePoliciesDto();
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      await expect(service.grantPolicies(sub, dto)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: sub });
       expect(repository.save).not.toHaveBeenCalled();
     });
   });
