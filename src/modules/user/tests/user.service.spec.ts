@@ -257,7 +257,7 @@ describe('UserService', () => {
   });
 
   describe('grantPolicies', () => {
-    it('should merge current and new policies without duplicates and save user', async () => {
+    it('should grant user policies correctly', async () => {
       const { service, repository } = context;
       const sub = 1;
       const dto = makePoliciesDto();
@@ -265,7 +265,6 @@ describe('UserService', () => {
         policies: [RoutePolicies.MESSAGE_FIND_ALL],
       });
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
-      jest.spyOn(repository, 'save').mockResolvedValue(entity);
       await service.grantPolicies(sub, dto);
       expect(repository.findOneBy).toHaveBeenCalledWith({ id: sub });
       expect(repository.save).toHaveBeenCalledWith(
@@ -284,6 +283,37 @@ describe('UserService', () => {
       const dto = makePoliciesDto();
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       await expect(service.grantPolicies(sub, dto)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: sub });
+      expect(repository.save).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('revokePolicies', () => {
+    it('should revoke user policies correctly', async () => {
+      const { service, repository } = context;
+      const sub = 1;
+      const dto = makePoliciesDto();
+      const entity = makeUserEntity({
+        policies: [RoutePolicies.USER_FIND_ALL, RoutePolicies.MESSAGE_FIND_ALL],
+      });
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+      await service.revokePolicies(sub, dto);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: sub });
+      expect(repository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          policies: [RoutePolicies.MESSAGE_FIND_ALL],
+        }),
+      );
+    });
+
+    it('should throw a not found exception when user does not exist', async () => {
+      const { service, repository } = context;
+      const sub = 0;
+      const dto = makePoliciesDto();
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      await expect(service.revokePolicies(sub, dto)).rejects.toThrow(
         NotFoundException,
       );
       expect(repository.findOneBy).toHaveBeenCalledWith({ id: sub });
