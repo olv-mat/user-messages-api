@@ -3,7 +3,11 @@ import { PoliciesDto } from 'src/modules/user/dtos/UpddatePolicies.dto';
 
 export const makePoliciesDto = (
   override?: Partial<PoliciesDto>,
-): PoliciesDto => ({
-  policies: [RoutePolicies.USER_FIND_ALL],
-  ...override,
-});
+): PoliciesDto => {
+  const dto = new PoliciesDto();
+  Object.assign(dto, {
+    policies: [RoutePolicies.USER_FIND_ALL],
+    ...override,
+  });
+  return dto;
+};
