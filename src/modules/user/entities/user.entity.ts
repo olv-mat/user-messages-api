@@ -17,7 +17,7 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'simple-array', nullable: true })
   policies: RoutePolicies[] | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   picture: string | null;
 
   // Messages sent by the user
