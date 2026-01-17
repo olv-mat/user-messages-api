@@ -1,10 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { TokenService } from './token.service';
+import { CredentialService } from './credential.service';
 
 @Injectable()
-export class JwtServiceImplementation implements TokenService {
+export class JwtServiceImplementation implements CredentialService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,

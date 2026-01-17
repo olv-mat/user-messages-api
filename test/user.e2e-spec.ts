@@ -11,10 +11,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { ErrorLoggingInterceptor } from 'src/common/interceptors/error-logging.interceptor';
 import { RequestTimeInterceptor } from 'src/common/interceptors/request-time.interceptor';
+import { CredentialModule } from 'src/common/modules/credential/credential.module';
 import { CryptographyModule } from 'src/common/modules/cryptography/cryptography.module';
-import { RegisterRootUserSeed } from 'src/common/modules/seed/register-root-user.seed';
-import { SeedModule } from 'src/common/modules/seed/seed.module';
-import { TokenModule } from 'src/common/modules/token/token.module';
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
 import { makeRegisterDto } from 'src/common/tests/factories/register-dto.factory';
 import { AuthModule } from 'src/modules/auth/auth.module';
@@ -69,8 +67,7 @@ describe('User (e2e)', () => {
           serveRoot: '/pictures',
         }),
         CryptographyModule,
-        SeedModule,
-        TokenModule,
+        CredentialModule,
         AuthModule,
         HealthModule,
         MessageModule,
@@ -91,7 +88,6 @@ describe('User (e2e)', () => {
       new RequestTimeInterceptor(),
       new ErrorLoggingInterceptor(),
     );
-    await app.get(RegisterRootUserSeed).run();
     await app.init();
   }, 20000);
 

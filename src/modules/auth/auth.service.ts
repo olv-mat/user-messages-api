@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserInterface } from 'src/common/interfaces/user.interface';
+import { CredentialService } from 'src/common/modules/credential/credential.service';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
-import { TokenService } from 'src/common/modules/token/token.service';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { AuthResponseDto } from './dtos/AuthResponse.dto';
@@ -16,7 +16,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly cryptographyService: CryptographyService,
-    private readonly tokenService: TokenService,
+    private readonly credentialService: CredentialService,
   ) {}
 
   public async login(dto: LoginDto): Promise<AuthResponseDto> {
@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   public async refresh(dto: RefreshTokenDto): Promise<AuthResponseDto> {
-    const { sub } = await this.tokenService.verify<TokenSubject>(
+    const { sub } = await this.credentialService.verify<TokenSubject>(
       dto.refreshToken,
     );
     const userEntity = await this.userService.findOne(sub);
@@ -45,12 +45,12 @@ export class AuthService {
   }
 
   private async generateTokens(user: UserEntity): Promise<AuthResponseDto> {
-    const accessToken = await this.tokenService.sign({
+    const accessToken = await this.credentialService.sign({
       sub: user.id,
       name: user.name,
       email: user.email,
     });
-    const refreshToken = await this.tokenService.refresh({ sub: user.id });
+    const refreshToken = await this.credentialService.refresh({ sub: user.id });
     return new AuthResponseDto(user.id, accessToken, refreshToken);
   }
 }

@@ -3,7 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ErrorLoggingInterceptor } from './common/interceptors/error-logging.interceptor';
 import { RequestTimeInterceptor } from './common/interceptors/request-time.interceptor';
-import { RegisterRootUserSeed } from './common/modules/seed/register-root-user.seed';
 import { ParseIntIdPipe } from './common/pipes/parse-int-id.pipe';
 
 /*
@@ -28,7 +27,6 @@ async function bootstrap() {
     new RequestTimeInterceptor(),
     new ErrorLoggingInterceptor(),
   );
-  await app.get(RegisterRootUserSeed).run();
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();

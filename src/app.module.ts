@@ -6,12 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { CustomExceptionFilter } from './common/filters/custom-exception.filter';
 import { RequestUuidMiddleware } from './common/middlewares/request-uuid.middleware';
+import { CredentialModule } from './common/modules/credential/credential.module';
 import { CryptographyModule } from './common/modules/cryptography/cryptography.module';
-import { SeedModule } from './common/modules/seed/seed.module';
-import { TokenModule } from './common/modules/token/token.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
+import { MessageEntity } from './modules/message/entities/message.entity';
 import { MessageModule } from './modules/message/message.module';
+import { UserEntity } from './modules/user/entities/user.entity';
 import { UserModule } from './modules/user/user.module';
 
 /* 
@@ -38,8 +39,9 @@ import { UserModule } from './modules/user/user.module';
         username: configService.getOrThrow('DATABASE_USERNAME'),
         password: configService.getOrThrow('DATABASE_PASSWORD'),
         database: configService.getOrThrow('DATABASE_NAME'),
-        autoLoadEntities: true,
-        synchronize: true,
+        entities: [MessageEntity, UserEntity],
+        autoLoadEntities: false,
+        synchronize: false,
       }),
     }),
     // npm i @nestjs/serve-static
@@ -47,9 +49,8 @@ import { UserModule } from './modules/user/user.module';
       rootPath: join(process.cwd(), 'pictures'),
       serveRoot: '/pictures',
     }),
+    CredentialModule,
     CryptographyModule,
-    SeedModule,
-    TokenModule,
     AuthModule,
     HealthModule,
     MessageModule,
