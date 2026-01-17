@@ -22,10 +22,7 @@ export class RegisterRootUserSeed {
     }
     const name = this.getCredential('ROOT_USER_NAME');
     const password = this.getCredential('ROOT_USER_PASSWORD');
-    const policies = [
-      RoutePolicies.POLICIES_GRANT,
-      RoutePolicies.POLICIES_REVOKE,
-    ];
+    const policies = Object.values(RoutePolicies);
     await this.userService.create(
       new RegisterRootUserDto(name, email, password, policies),
     );
