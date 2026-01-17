@@ -5,14 +5,14 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 
-export const PictureUpload = (size = 10) => {
+export const PictureUpload = () => {
   return UploadedFile(
     new ParseFilePipeBuilder()
       .addFileTypeValidator({
         fileType: /image\/(jpeg|png)/,
       })
       .addMaxSizeValidator({
-        maxSize: size * 1024 * 1024,
+        maxSize: 10 * 1024 * 1024,
       })
       .build({
         fileIsRequired: true,

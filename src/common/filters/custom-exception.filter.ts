@@ -7,10 +7,10 @@ import {
 import { Response } from 'express';
 
 @Catch(InternalServerErrorException)
-export class CustomExceptionFilter<T extends InternalServerErrorException>
-  implements ExceptionFilter
+export class CustomExceptionFilter
+  implements ExceptionFilter<InternalServerErrorException>
 {
-  public catch(exception: T, host: ArgumentsHost) {
+  public catch(exception: InternalServerErrorException, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const status = exception.getStatus();

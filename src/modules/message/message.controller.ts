@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
@@ -32,10 +31,8 @@ export class MessageController {
   @Get()
   @SetRoutePolicy(RoutePolicies.MESSAGE_FIND_ALL)
   @UseGuards(PoliciesGuard)
-  public async findAll(
-    @Query('search') search?: string,
-  ): Promise<MessageResponseDto[]> {
-    const messageEntities = await this.messageService.findAll(search);
+  public async findAll(): Promise<MessageResponseDto[]> {
+    const messageEntities = await this.messageService.findAll();
     return MessageResponseMapper.toResponseMany(messageEntities);
   }
 

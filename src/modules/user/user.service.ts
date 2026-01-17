@@ -1,13 +1,13 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomUUID } from 'crypto';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { RegisterRootUserDto } from 'src/modules/auth/dtos/RegisterRootUser.dto';
+import { UserInterface } from 'src/common/interfaces/user.interface';
 import { Repository } from 'typeorm';
 import { CryptographyService } from '../../common/modules/cryptography/cryptography.service';
 import { RegisterDto } from '../auth/dtos/Register.dto';
@@ -20,57 +20,66 @@ import { UserEntity } from './entities/user.entity';
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly usersRepository: Repository<UserEntity>,
+    private readonly userRepository: Repository<UserEntity>,
     private readonly cryptographyService: CryptographyService,
   ) {}
 
-  public findAll(): Promise<UserEntity[]> {
-    return this.usersRepository.find();
+  public findUserByEmail(email: string): Promise<UserEntity | null> {
+    return this.userRepository.findOneBy({ email: email });
   }
 
-  public findOne(sub: number): Promise<UserEntity> {
-    return this.getUserById(sub);
-  }
-
-  public async create(
-    dto: RegisterDto | RegisterRootUserDto,
-  ): Promise<UserEntity> {
+  public async create(dto: RegisterDto): Promise<UserEntity> {
     await this.assertEmailIsAvailable(dto.email);
-    return this.usersRepository.save({
+    return this.userRepository.save({
       ...dto,
       password: await this.cryptographyService.hash(dto.password),
     });
   }
 
-  public async update(sub: number, dto: UpdateUserDto): Promise<void> {
-    const userEntity = await this.getUserById(sub);
-    const payload: Partial<UserEntity> = { ...dto };
-
-    if (payload.email && payload.email != userEntity.email) {
-      await this.assertEmailIsAvailable(payload.email);
-    }
-
-    if (payload.password) {
-      payload.password = await this.cryptographyService.hash(payload.password);
-    }
-
-    await this.usersRepository.update(userEntity.id, payload);
+  public findAll(): Promise<UserEntity[]> {
+    return this.userRepository.find();
   }
 
-  public async delete(sub: number): Promise<void> {
+  public async findOne(sub: number, user?: UserInterface): Promise<UserEntity> {
     const userEntity = await this.getUserById(sub);
-    await this.usersRepository.delete(userEntity.id);
+    if (user) this.assertOwner(userEntity, user);
+    return userEntity;
   }
 
   public async uploadPicture(
     sub: number,
     picture: Express.Multer.File,
+    user?: UserInterface,
   ): Promise<void> {
     const userEntity = await this.getUserById(sub);
-    const folder = path.resolve(process.cwd(), 'pictures', sub.toString());
-    await this.resetPictureFolder(folder);
-    userEntity.picture = await this.savePicture(picture, folder);
-    await this.usersRepository.save(userEntity);
+    if (user) this.assertOwner(userEntity, user);
+    const folder = path.resolve(process.cwd(), 'pictures');
+    const extension = path.extname(picture.originalname);
+    const filename = `${userEntity.id}${extension}`;
+    const fullPath = path.join(folder, filename);
+    await fs.writeFile(fullPath, picture.buffer);
+    await this.userRepository.save({
+      ...userEntity,
+      picture: filename,
+    });
+  }
+
+  public async update(
+    sub: number,
+    dto: UpdateUserDto,
+    user?: UserInterface,
+  ): Promise<void> {
+    const userEntity = await this.getUserById(sub);
+    if (user) this.assertOwner(userEntity, user);
+    if (dto.email && dto.email != userEntity.email) {
+      await this.assertEmailIsAvailable(dto.email);
+    }
+    await this.userRepository.update(userEntity.id, {
+      ...dto,
+      ...(dto.password && {
+        password: await this.cryptographyService.hash(dto.password),
+      }),
+    });
   }
 
   public async grantPolicies(id: number, dto: PoliciesDto): Promise<void> {
@@ -79,7 +88,7 @@ export class UserService {
     userEntity.policies = Array.from(
       new Set([...currentPolicies, ...dto.policies]),
     );
-    await this.usersRepository.save(userEntity);
+    await this.userRepository.save(userEntity);
   }
 
   public async revokePolicies(id: number, dto: PoliciesDto): Promise<void> {
@@ -88,24 +97,29 @@ export class UserService {
     userEntity.policies = currentPolicies.filter(
       (policy) => !dto.policies.includes(policy),
     );
-    await this.usersRepository.save(userEntity);
+    await this.userRepository.save(userEntity);
   }
 
-  public async getUserByEmail(email: string): Promise<UserEntity | null> {
-    const userEntity = await this.usersRepository.findOne({
-      where: { email: email },
-    });
-    return userEntity;
+  public async delete(sub: number, user: UserInterface): Promise<void> {
+    const userEntity = await this.getUserById(sub);
+    if (user) this.assertOwner(userEntity, user);
+    await this.userRepository.delete(userEntity.id);
   }
 
   private async getUserById(id: number): Promise<UserEntity> {
-    const userEntity = await this.usersRepository.findOneBy({ id: id });
+    const userEntity = await this.userRepository.findOneBy({ id: id });
     if (!userEntity) throw new NotFoundException('User not found');
     return userEntity;
   }
 
+  private assertOwner(userEntity: UserEntity, user: UserInterface): void {
+    if (userEntity.id !== user.sub) {
+      throw new ForbiddenException('You cannot perform this action');
+    }
+  }
+
   private async assertEmailIsAvailable(email: string): Promise<void> {
-    const userEntity = await this.usersRepository.findOneBy({ email: email });
+    const userEntity = await this.userRepository.findOneBy({ email: email });
     if (userEntity) throw new ConflictException('Email already in use');
   }
 
@@ -121,21 +135,5 @@ export class UserService {
       userEntity,
       currentPolicies,
     };
-  }
-
-  private async resetPictureFolder(folder: string): Promise<void> {
-    await fs.rm(folder, { recursive: true, force: true });
-    await fs.mkdir(folder, { recursive: true });
-  }
-
-  private async savePicture(
-    picture: Express.Multer.File,
-    folder: string,
-  ): Promise<string> {
-    const extension = path.extname(picture.originalname);
-    const pictureName = `${randomUUID()}${extension}`;
-    const fullPath = path.join(folder, pictureName);
-    await fs.writeFile(fullPath, picture.buffer);
-    return pictureName;
   }
 }

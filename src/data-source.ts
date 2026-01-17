@@ -4,7 +4,7 @@ import { MessageEntity } from './modules/message/entities/message.entity';
 import { UserEntity } from './modules/user/entities/user.entity';
 
 /* 
-  npm run migration:generate -- src/migrations/<migration>
+  npm run migration:generate -- src/migrations/...
   npm run migration:run
   npm run migration:generate
 */

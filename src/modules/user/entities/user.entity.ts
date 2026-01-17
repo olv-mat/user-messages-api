@@ -20,11 +20,11 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'varchar', nullable: true })
   picture: string | null;
 
-  // Messages sent by the user
+  // Messages Sent By The User
   @OneToMany(() => MessageEntity, (message) => message.sender)
   sentMessages: MessageEntity[];
 
-  // Messages received by the user
+  // Messages Received By The User
   @OneToMany(() => MessageEntity, (message) => message.recipient)
   receivedMessages: MessageEntity[];
 }

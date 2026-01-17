@@ -20,7 +20,7 @@ export class AuthService {
   ) {}
 
   public async login(dto: LoginDto): Promise<AuthResponseDto> {
-    const userEntity = await this.userService.getUserByEmail(dto.email);
+    const userEntity = await this.userService.findUserByEmail(dto.email);
     const isValid =
       userEntity &&
       (await this.cryptographyService.compare(

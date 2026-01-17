@@ -1,12 +1,14 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
-import { makeCryptographyMock } from 'src/common/tests/mocks/cryptography.mock';
+import { makeCryptographyServiceMock } from 'src/common/tests/mocks/cryptography-service.mock';
 import { makeRepositoryMock } from 'src/common/tests/mocks/repository.mock';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../../entities/user.entity';
 import { UserService } from '../../user.service';
 import { UserServiceTestContext } from '../types/user-service-test-context.type';
+
+// npm i --D @nestjs/testing
 
 export async function createUserServiceTestModule(): Promise<UserServiceTestContext> {
   const module = await Test.createTestingModule({
@@ -18,7 +20,7 @@ export async function createUserServiceTestModule(): Promise<UserServiceTestCont
       },
       {
         provide: CryptographyService,
-        useValue: makeCryptographyMock(),
+        useValue: makeCryptographyServiceMock(),
       },
     ],
   }).compile();

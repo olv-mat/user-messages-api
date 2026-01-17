@@ -14,6 +14,7 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { PictureUpload } from 'src/common/decorators/picture-upload.decorator';
 import { SetRoutePolicy } from 'src/common/decorators/set-route-policy.decorator';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
+import type { UserInterface } from 'src/common/interfaces/user.interface';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 import { RoutePolicies } from '../auth/enums/route-policies.enum';
@@ -37,34 +38,37 @@ export class UserController {
     return UserResponseMapper.toResponseMany(userEntities);
   }
 
-  @Get('/me')
+  @Get(':id')
   public async findOne(
-    @CurrentUser('sub') sub: number,
+    @Param('id') id: number,
+    @CurrentUser() user: UserInterface,
   ): Promise<UserResponseDto> {
-    const userEntity = await this.userService.findOne(sub);
+    const userEntity = await this.userService.findOne(id, user);
     return UserResponseMapper.toResponseOne(userEntity);
   }
 
   // npm i -D @types/multer
-  @Post('me/picture')
+  @Post(':id/picture')
   @UseInterceptors(FileInterceptor('picture'))
   public async uploadPicture(
-    @CurrentUser('sub') sub: number,
+    @Param('id') id: number,
     @PictureUpload() picture: Express.Multer.File,
+    @CurrentUser() user: UserInterface,
   ): Promise<DefaultMessageResponseDto> {
-    await this.userService.uploadPicture(sub, picture);
+    await this.userService.uploadPicture(id, picture, user);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'Profile picture uploaded successfully',
     );
   }
 
-  @Patch('/me')
+  @Patch(':id')
   public async update(
-    @CurrentUser('sub') sub: number,
+    @Param('id') id: number,
     @Body() dto: UpdateUserDto,
+    @CurrentUser() user: UserInterface,
   ): Promise<DefaultMessageResponseDto> {
-    await this.userService.update(sub, dto);
+    await this.userService.update(id, dto, user);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'User updated successfully',
@@ -99,11 +103,12 @@ export class UserController {
     );
   }
 
-  @Delete('/me')
+  @Delete(':id')
   public async delete(
-    @CurrentUser('sub') sub: number,
+    @Param('id') id: number,
+    @CurrentUser() user: UserInterface,
   ): Promise<DefaultMessageResponseDto> {
-    await this.userService.delete(sub);
+    await this.userService.delete(id, user);
     return ResponseMapper.toResponse(
       DefaultMessageResponseDto,
       'User deleted successfully',
