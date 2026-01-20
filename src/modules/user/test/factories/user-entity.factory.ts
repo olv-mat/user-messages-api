@@ -1,4 +1,4 @@
-import { UserEntity } from 'src/modules/user/entities/user.entity';
+import { UserEntity } from '../../entities/user.entity';
 
 export const makeUserEntity = (override?: Partial<UserEntity>): UserEntity => ({
   id: 1,

@@ -1,4 +1,4 @@
-import { UpdateUserDto } from 'src/modules/user/dtos/UpdateUser.dto';
+import { UpdateUserDto } from '../../dtos/UpdateUser.dto';
 
 export const makeUpdateUserDto = (
   override?: Partial<UpdateUserDto>,

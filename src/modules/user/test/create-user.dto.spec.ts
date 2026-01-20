@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { validate } from 'class-validator';
-import { makeRegisterDto } from 'src/common/tests/factories/register-dto.factory';
+import { makeCreateUserDto } from './factories/create-user-dto.factory';
 
-describe('RegisterDto', () => {
+describe('CreateUserDto', () => {
   it('should accept when valid', async () => {
-    const dto = makeRegisterDto();
+    const dto = makeCreateUserDto();
     const errors = await validate(dto);
     expect(errors.length).toBe(0);
   });
 
   describe('name', () => {
     it('should fail if empty', async () => {
-      const dto = makeRegisterDto({ name: '' });
+      const dto = makeCreateUserDto({ name: '' });
       const errors = await validate(dto);
       expect(errors.length).toBe(1);
       expect(errors[0].property).toBe('name');
@@ -19,7 +19,7 @@ describe('RegisterDto', () => {
     });
 
     it('should fail if not a string', async () => {
-      const dto = makeRegisterDto({ name: 123 as any });
+      const dto = makeCreateUserDto({ name: 123 as any });
       const errors = await validate(dto);
       expect(errors.length).toBe(1);
       expect(errors[0].property).toBe('name');
@@ -27,7 +27,7 @@ describe('RegisterDto', () => {
     });
 
     it('should fail if contains only spaces', async () => {
-      const dto = makeRegisterDto({ name: '  ' });
+      const dto = makeCreateUserDto({ name: '  ' });
       const errors = await validate(dto);
       expect(errors.length).toBe(1);
       expect(errors[0].property).toBe('name');
@@ -37,7 +37,7 @@ describe('RegisterDto', () => {
 
   describe('email', () => {
     it('should fail if empty', async () => {
-      const dto = makeRegisterDto({ email: '' });
+      const dto = makeCreateUserDto({ email: '' });
       const errors = await validate(dto);
       expect(errors.length).toBe(1);
       expect(errors[0].property).toBe('email');
@@ -45,7 +45,7 @@ describe('RegisterDto', () => {
     });
 
     it('should fail if not a valid email', async () => {
-      const dto = makeRegisterDto({ email: 'email' });
+      const dto = makeCreateUserDto({ email: 'email' });
       const errors = await validate(dto);
       expect(errors.length).toBe(1);
       expect(errors[0].property).toBe('email');
@@ -55,7 +55,7 @@ describe('RegisterDto', () => {
 
   describe('password', () => {
     it('should fail if empty', async () => {
-      const dto = makeRegisterDto({ password: '' });
+      const dto = makeCreateUserDto({ password: '' });
       const errors = await validate(dto);
       expect(errors.length).toBe(1);
       expect(errors[0].property).toBe('password');
@@ -63,7 +63,7 @@ describe('RegisterDto', () => {
     });
 
     it('should fail if the password is weak', async () => {
-      const dto = makeRegisterDto({ password: '123' });
+      const dto = makeCreateUserDto({ password: '123' });
       const errors = await validate(dto);
       expect(errors.length).toBe(1);
       expect(errors[0].property).toBe('password');

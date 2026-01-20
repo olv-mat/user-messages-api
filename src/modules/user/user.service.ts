@@ -10,8 +10,8 @@ import * as path from 'path';
 import { UserInterface } from 'src/common/interfaces/user.interface';
 import { Repository } from 'typeorm';
 import { CryptographyService } from '../../common/modules/cryptography/cryptography.service';
-import { RegisterDto } from '../auth/dtos/Register.dto';
 import { RoutePolicies } from '../auth/enums/route-policies.enum';
+import { CreateUserDto } from './dtos/CreateUser.dto';
 import { UpdateUserDto } from './dtos/UpdateUser.dto';
 import { PoliciesDto } from './dtos/UpddatePolicies.dto';
 import { UserEntity } from './entities/user.entity';
@@ -28,7 +28,7 @@ export class UserService {
     return this.userRepository.findOneBy({ email: email });
   }
 
-  public async create(dto: RegisterDto): Promise<UserEntity> {
+  public async create(dto: CreateUserDto): Promise<UserEntity> {
     await this.assertEmailIsAvailable(dto.email);
     return this.userRepository.save({
       ...dto,
@@ -100,7 +100,7 @@ export class UserService {
     await this.userRepository.save(userEntity);
   }
 
-  public async delete(sub: number, user: UserInterface): Promise<void> {
+  public async delete(sub: number, user?: UserInterface): Promise<void> {
     const userEntity = await this.getUserById(sub);
     if (user) this.assertOwner(userEntity, user);
     await this.userRepository.delete(userEntity.id);

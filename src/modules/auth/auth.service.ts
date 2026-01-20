@@ -2,12 +2,12 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserInterface } from 'src/common/interfaces/user.interface';
 import { CredentialService } from 'src/common/modules/credential/credential.service';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
+import { CreateUserDto } from '../user/dtos/CreateUser.dto';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { AuthResponseDto } from './dtos/AuthResponse.dto';
 import { LoginDto } from './dtos/Login.dto';
 import { RefreshTokenDto } from './dtos/RefreshToken.dto';
-import { RegisterDto } from './dtos/Register.dto';
 
 type TokenSubject = Pick<UserInterface, 'sub'>;
 
@@ -31,7 +31,7 @@ export class AuthService {
     return this.generateTokens(userEntity);
   }
 
-  public async register(dto: RegisterDto): Promise<AuthResponseDto> {
+  public async register(dto: CreateUserDto): Promise<AuthResponseDto> {
     const userEntity = await this.userService.create(dto);
     return this.generateTokens(userEntity);
   }

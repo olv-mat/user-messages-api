@@ -1,5 +1,5 @@
 import { RoutePolicies } from 'src/modules/auth/enums/route-policies.enum';
-import { PoliciesDto } from 'src/modules/user/dtos/UpddatePolicies.dto';
+import { PoliciesDto } from '../../dtos/UpddatePolicies.dto';
 
 export const makePoliciesDto = (
   override?: Partial<PoliciesDto>,

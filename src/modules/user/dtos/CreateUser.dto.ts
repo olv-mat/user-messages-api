@@ -6,7 +6,7 @@ import {
   Matches,
 } from 'class-validator';
 
-export class RegisterDto {
+export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @Matches(/\S/, { message: 'name cannot contain only spaces' })

@@ -14,15 +14,15 @@ import { RequestTimeInterceptor } from 'src/common/interceptors/request-time.int
 import { CredentialModule } from 'src/common/modules/credential/credential.module';
 import { CryptographyModule } from 'src/common/modules/cryptography/cryptography.module';
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
-import { makeRegisterDto } from 'src/common/tests/factories/register-dto.factory';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { HealthModule } from 'src/modules/health/health.module';
 import { MessageModule } from 'src/modules/message/message.module';
+import { makeCreateUserDto } from 'src/modules/user/test/factories/create-user-dto.factory';
 import { UserModule } from 'src/modules/user/user.module';
 import request from 'supertest';
 
 const registerUserAndLogin = async (app: INestApplication) => {
-  const dto = makeRegisterDto();
+  const dto = makeCreateUserDto();
   const response = await request(app.getHttpServer())
     .post('/auth/register')
     .send(dto);
