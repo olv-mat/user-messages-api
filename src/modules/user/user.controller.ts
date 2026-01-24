@@ -10,13 +10,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { PictureUpload } from 'src/common/decorators/picture-upload.decorator';
 import { SetRoutePolicy } from 'src/common/decorators/set-route-policy.decorator';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
 import type { UserInterface } from 'src/common/interfaces/user.interface';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
+import { UserIdParam } from 'src/common/swagger/decorators/user-id-param.decorator';
 import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 import { RoutePolicies } from '../auth/enums/route-policies.enum';
 import { PoliciesGuard } from '../auth/guards/policies.guard';
@@ -33,6 +34,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Retrieve all users' })
   @SetRoutePolicy(RoutePolicies.USER_FIND_ALL)
   @UseGuards(PoliciesGuard)
   public async findAll(): Promise<UserResponseDto[]> {
@@ -41,6 +43,8 @@ export class UserController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Retrieve a specific user' })
+  @UserIdParam()
   public async findOne(
     @Param('id') id: number,
     @CurrentUser() user: UserInterface,
@@ -51,6 +55,8 @@ export class UserController {
 
   // npm i -D @types/multer
   @Post(':id/picture')
+  @ApiOperation({ summary: 'Upload profile picture for a specific user' })
+  @UserIdParam()
   @UseInterceptors(FileInterceptor('picture'))
   public async uploadPicture(
     @Param('id') id: number,
@@ -65,6 +71,8 @@ export class UserController {
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update a specific user' })
+  @UserIdParam()
   public async update(
     @Param('id') id: number,
     @Body() dto: UpdateUserDto,
@@ -78,6 +86,8 @@ export class UserController {
   }
 
   @Patch(':id/policies/grant')
+  @ApiOperation({ summary: 'Grant policies to a specific user' })
+  @UserIdParam()
   @SetRoutePolicy(RoutePolicies.POLICIES_GRANT)
   @UseGuards(PoliciesGuard)
   public async grantPolicies(
@@ -92,6 +102,8 @@ export class UserController {
   }
 
   @Patch(':id/policies/revoke')
+  @ApiOperation({ summary: 'Revoke policies from a specific user' })
+  @UserIdParam()
   @SetRoutePolicy(RoutePolicies.POLICIES_REVOKE)
   @UseGuards(PoliciesGuard)
   public async revokePolicies(
@@ -106,6 +118,8 @@ export class UserController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a specific user' })
+  @UserIdParam()
   public async delete(
     @Param('id') id: number,
     @CurrentUser() user: UserInterface,
