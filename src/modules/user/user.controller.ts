@@ -18,6 +18,13 @@ import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageRespons
 import type { UserInterface } from 'src/common/interfaces/user.interface';
 import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { UserIdParam } from 'src/common/swagger/decorators/user-id-param.decorator';
+import {
+  SwaggerBadRequest,
+  SwaggerForbidden,
+  SwaggerInternalServerError,
+  SwaggerNotFound,
+  SwaggerUnauthorized,
+} from 'src/common/swagger/responses.swagger';
 import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 import { RoutePolicies } from '../auth/enums/route-policies.enum';
 import { PoliciesGuard } from '../auth/guards/policies.guard';
@@ -35,6 +42,9 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Retrieve all users' })
+  @SwaggerUnauthorized('Missing authentication token')
+  @SwaggerForbidden('Forbidden resource')
+  @SwaggerInternalServerError()
   @SetRoutePolicy(RoutePolicies.USER_FIND_ALL)
   @UseGuards(PoliciesGuard)
   public async findAll(): Promise<UserResponseDto[]> {
@@ -45,6 +55,11 @@ export class UserController {
   @Get(':id')
   @ApiOperation({ summary: 'Retrieve a specific user' })
   @UserIdParam()
+  @SwaggerBadRequest('Inavlid identifier')
+  @SwaggerUnauthorized('Missing authentication token')
+  @SwaggerForbidden('You cannot perform this action')
+  @SwaggerNotFound('User not found')
+  @SwaggerInternalServerError()
   public async findOne(
     @Param('id') id: number,
     @CurrentUser() user: UserInterface,
@@ -57,6 +72,11 @@ export class UserController {
   @Post(':id/picture')
   @ApiOperation({ summary: 'Upload profile picture for a specific user' })
   @UserIdParam()
+  @SwaggerBadRequest('Inavlid identifier')
+  @SwaggerUnauthorized('Missing authentication token')
+  @SwaggerForbidden('You cannot perform this action')
+  @SwaggerNotFound('User not found')
+  @SwaggerInternalServerError()
   @UseInterceptors(FileInterceptor('picture'))
   public async uploadPicture(
     @Param('id') id: number,
@@ -73,6 +93,11 @@ export class UserController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a specific user' })
   @UserIdParam()
+  @SwaggerBadRequest('Inavlid identifier')
+  @SwaggerUnauthorized('Missing authentication token')
+  @SwaggerForbidden('You cannot perform this action')
+  @SwaggerNotFound('User not found')
+  @SwaggerInternalServerError()
   public async update(
     @Param('id') id: number,
     @Body() dto: UpdateUserDto,
@@ -88,6 +113,10 @@ export class UserController {
   @Patch(':id/policies/grant')
   @ApiOperation({ summary: 'Grant policies to a specific user' })
   @UserIdParam()
+  @SwaggerBadRequest('Inavlid identifier')
+  @SwaggerUnauthorized('Missing authentication token')
+  @SwaggerForbidden('Forbidden resource')
+  @SwaggerInternalServerError()
   @SetRoutePolicy(RoutePolicies.POLICIES_GRANT)
   @UseGuards(PoliciesGuard)
   public async grantPolicies(
@@ -104,6 +133,10 @@ export class UserController {
   @Patch(':id/policies/revoke')
   @ApiOperation({ summary: 'Revoke policies from a specific user' })
   @UserIdParam()
+  @SwaggerBadRequest('Inavlid identifier')
+  @SwaggerUnauthorized('Missing authentication token')
+  @SwaggerForbidden('Forbidden resource')
+  @SwaggerInternalServerError()
   @SetRoutePolicy(RoutePolicies.POLICIES_REVOKE)
   @UseGuards(PoliciesGuard)
   public async revokePolicies(
@@ -120,6 +153,11 @@ export class UserController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a specific user' })
   @UserIdParam()
+  @SwaggerBadRequest('Inavlid identifier')
+  @SwaggerUnauthorized('Missing authentication token')
+  @SwaggerForbidden('You cannot perform this action')
+  @SwaggerNotFound('User not found')
+  @SwaggerInternalServerError()
   public async delete(
     @Param('id') id: number,
     @CurrentUser() user: UserInterface,

@@ -3,13 +3,11 @@ import {
   IsNotEmpty,
   IsString,
   IsStrongPassword,
-  Matches,
 } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  @Matches(/\S/, { message: 'name cannot contain only spaces' })
   public readonly name: string;
 
   @IsNotEmpty()
