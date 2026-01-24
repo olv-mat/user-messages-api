@@ -8,6 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { SetRoutePolicy } from 'src/common/decorators/set-route-policy.decorator';
 import { DefaultMessageResponseDto } from 'src/common/dtos/DefaultMessageResponse.dto';
@@ -25,6 +26,7 @@ import { MessageService } from './message.service';
 
 @Controller('messages')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 

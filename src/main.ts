@@ -43,6 +43,7 @@ async function bootstrap() {
       WebSocket-based communication, and secure JWT authentication with policy-based authorization.`.trim(),
     )
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, documentBuilder);
   const theme = new SwaggerTheme();

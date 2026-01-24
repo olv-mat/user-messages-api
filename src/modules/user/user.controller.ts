@@ -10,6 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { PictureUpload } from 'src/common/decorators/picture-upload.decorator';
 import { SetRoutePolicy } from 'src/common/decorators/set-route-policy.decorator';
@@ -27,6 +28,7 @@ import { UserService } from './user.service';
 
 @Controller('users')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
