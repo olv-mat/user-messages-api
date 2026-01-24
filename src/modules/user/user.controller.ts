@@ -10,7 +10,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { PictureUpload } from 'src/common/decorators/picture-upload.decorator';
 import { SetRoutePolicy } from 'src/common/decorators/set-route-policy.decorator';
@@ -72,6 +77,19 @@ export class UserController {
   @Post(':id/picture')
   @ApiOperation({ summary: 'Upload profile picture for a specific user' })
   @UserIdParam()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        picture: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['picture'],
+    },
+  })
   @SwaggerBadRequest('Inavlid identifier')
   @SwaggerUnauthorized('Missing authentication token')
   @SwaggerForbidden('You cannot perform this action')
