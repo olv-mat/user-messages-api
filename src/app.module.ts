@@ -1,7 +1,8 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { CustomExceptionFilter } from './common/filters/custom-exception.filter';
@@ -22,6 +23,16 @@ import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
+    // npm i @nestjs/throttler
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 20,
+          blockDuration: 5000,
+        },
+      ],
+    }),
     // npm i @nestjs/config
     ConfigModule.forRoot({
       isGlobal: true,
@@ -61,6 +72,10 @@ import { UserModule } from './modules/user/user.module';
     {
       provide: APP_FILTER,
       useClass: CustomExceptionFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
