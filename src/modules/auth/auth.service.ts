@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserInterface } from 'src/common/interfaces/user.interface';
 import { CredentialService } from 'src/common/modules/credential/credential.service';
 import { CryptographyService } from 'src/common/modules/cryptography/cryptography.service';
+import { EmailService } from '../email/email.service';
 import { CreateUserDto } from '../user/dtos/CreateUser.dto';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
@@ -16,6 +17,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly cryptographyService: CryptographyService,
+    private readonly emailService: EmailService,
     private readonly credentialService: CredentialService,
   ) {}
 
@@ -33,6 +35,7 @@ export class AuthService {
 
   public async register(dto: CreateUserDto): Promise<AuthResponseDto> {
     const userEntity = await this.userService.create(dto);
+    await this.emailService.sendWelcomeMessage(userEntity);
     return this.generateTokens(userEntity);
   }
 

@@ -15,6 +15,7 @@ import { MessageEntity } from './modules/message/entities/message.entity';
 import { MessageModule } from './modules/message/message.module';
 import { UserEntity } from './modules/user/entities/user.entity';
 import { UserModule } from './modules/user/user.module';
+import { EmailModule } from './modules/email/email.module';
 
 /* 
   nest generate resource <resource> 
@@ -66,6 +67,7 @@ import { UserModule } from './modules/user/user.module';
     HealthModule,
     MessageModule,
     UserModule,
+    EmailModule,
   ],
   controllers: [],
   providers: [
