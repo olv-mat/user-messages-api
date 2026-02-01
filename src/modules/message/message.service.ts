@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserInterface } from 'src/common/interfaces/user.interface';
 import { UserService } from 'src/modules/user/user.service';
 import { Repository } from 'typeorm';
+import { ChatGateway } from '../chat/chat.gateway';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { UpdateMessageDto } from './dtos/UpdateMessage.dto';
 import { MessageEntity } from './entities/message.entity';
@@ -24,6 +25,7 @@ export class MessageService {
     @InjectRepository(MessageEntity)
     private readonly messageRepository: Repository<MessageEntity>,
     private readonly userService: UserService,
+    private readonly chatGateway: ChatGateway,
   ) {}
 
   public findAll(): Promise<MessageEntity[]> {
@@ -40,11 +42,13 @@ export class MessageService {
   ): Promise<MessageEntity> {
     const sender = await this.userService.findOne(user.sub);
     const recipient = await this.userService.findOne(dto.recipient);
-    return this.messageRepository.save({
+    const messageEntity = await this.messageRepository.save({
       content: dto.content,
       sender: sender,
       recipient: recipient,
     });
+    this.chatGateway.sendMessage(recipient.id, messageEntity.content);
+    return messageEntity;
   }
 
   public async update(

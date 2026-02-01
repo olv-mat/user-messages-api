@@ -10,12 +10,13 @@ import { RequestUuidMiddleware } from './common/middlewares/request-uuid.middlew
 import { CredentialModule } from './common/modules/credential/credential.module';
 import { CryptographyModule } from './common/modules/cryptography/cryptography.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { EmailModule } from './modules/email/email.module';
 import { HealthModule } from './modules/health/health.module';
 import { MessageEntity } from './modules/message/entities/message.entity';
 import { MessageModule } from './modules/message/message.module';
 import { UserEntity } from './modules/user/entities/user.entity';
 import { UserModule } from './modules/user/user.module';
-import { EmailModule } from './modules/email/email.module';
 
 /* 
   nest generate resource <resource> 
@@ -68,6 +69,7 @@ import { EmailModule } from './modules/email/email.module';
     MessageModule,
     UserModule,
     EmailModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [
