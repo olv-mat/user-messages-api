@@ -14,12 +14,10 @@ import { swaggerSetup } from './common/swagger/setup.swagger';
   npm run start:dev
 */
 
-// npm i class-validator class-transformer
-// npm i helmet
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  const environment = process.env.NODE_ENV;
+  // npm i class-validator class-transformer
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -32,11 +30,12 @@ async function bootstrap() {
     new RequestTimeInterceptor(),
     new ErrorLoggingInterceptor(),
   );
-  if (process.env.NODE_ENV === Environments.PRODUCTION) {
+  if (environment === Environments.PRODUCTION) {
+    // npm i helmet
     app.use(helmet()); // Set Security-Related HTTP Headers
     app.enableCors({}); // Allow Requests From Other Domains
   }
-  if (process.env.NODE_ENV !== Environments.PRODUCTION) swaggerSetup(app);
+  if (environment !== Environments.PRODUCTION) swaggerSetup(app);
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();
