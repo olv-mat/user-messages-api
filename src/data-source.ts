@@ -6,7 +6,7 @@ import { UserEntity } from './modules/user/entities/user.entity';
 /* 
   npm run migration:generate -- src/migrations/...
   npm run migration:run
-  npm run migration:generate
+  npm run migration:revert
 */
 
 export const AppDataSource = new DataSource({

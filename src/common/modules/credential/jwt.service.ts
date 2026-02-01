@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { CredentialService } from './credential.service';
 
+// npm i @nestjs/jwt
+
 @Injectable()
 export class JwtServiceImplementation implements CredentialService {
   constructor(

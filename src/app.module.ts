@@ -18,8 +18,7 @@ import { MessageModule } from './modules/message/message.module';
 import { UserEntity } from './modules/user/entities/user.entity';
 import { UserModule } from './modules/user/user.module';
 
-/* 
-  nest generate resource <resource> 
+/*  
   nest g res <resource>
 */
 
